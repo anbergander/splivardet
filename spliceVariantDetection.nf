@@ -4,7 +4,7 @@ workflow {
    def fastqs = Channel.fromPath (params.pathToFastqs)
    runDesaltMapping (fastqs)
    runGenerateBamBed (runDesaltMapping.out)
-   runIsoformDetectionFlair (fastqs, runGenerateBamBed.out)
+   runIsoformDetectionFlair (runGenerateBamBed.out)
 }
 
 
@@ -21,6 +21,7 @@ input:
 
 output:
 	path "${fastq}.sam"
+	path "${fastq}"
 
 script:
 
@@ -38,11 +39,13 @@ process runGenerateBamBed
 
 input:
 	path sam
+	path fastq
 	
 output:
 	path "${sam}.bam"
 	path "${sam}.bam.bai"
 	path "${sam}.bed"
+	path "${fastq}"
 	
 script:
 
@@ -61,12 +64,12 @@ exit 0
 
 process runIsoformDetectionFlair
 {
-
+publishDir "$params.out"
 input:
-	path fastq
 	path bam
 	path bambai
 	path bed
+	path fastq
 	
 output:
 	path "${bed}_all_corrected.bed"
@@ -74,6 +77,7 @@ output:
 	path "${bed}_cannot_verify.bed", optional: true
 	path "${bed}.isoforms.bed"
 	path "${bed}.isoforms.fa"
+	path "${fastq}"
 	
 script:
 
