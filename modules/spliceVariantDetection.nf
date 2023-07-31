@@ -84,6 +84,7 @@ output:
 	path "${out}.isoforms.bed"
 	path "${out}.isoforms.fa"
 	path "${out_fq}.final.fastq"
+	path "${out_fq}.isoforms.gtf"
 	
 script:
 
@@ -93,7 +94,7 @@ out_fq = fastq.getSimpleName()
 """
 flair correct -q $bed -f $params.annotationsGtf -g $params.genomeFasta -o ${out}
 
-flair collapse -g $params.genomeFasta -q ${out}_all_corrected.bed -r $fastq -o ${out}
+flair collapse -g $params.genomeFasta -q ${out}_all_corrected.bed -r $fastq -o ${out} --gtf $params.annotationsGtf
 
 exit 0
 """

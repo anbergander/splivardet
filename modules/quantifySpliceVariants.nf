@@ -36,7 +36,7 @@ awk -F '\\t' '{if (\$2 == "$params.condition_group"||\$2 == "$params.control_gro
 
 process runFlairQuantify {
 
-publishDir "$params.out",mode:"move"
+publishDir '$params.out', mode:'move'
 
 input:
 	path isoformFasta
