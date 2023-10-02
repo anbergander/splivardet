@@ -41,6 +41,7 @@ exit 0
 
 process runGenerateBamBed
 {
+publishDir "$params.out",mode:"copy"
 
 input:
 	path sam

@@ -36,7 +36,7 @@ awk -F '\\t' '{if (\$2 == "$params.condition_group"||\$2 == "$params.control_gro
 
 process runFlairQuantify {
 
-publishDir '$params.out', mode:'move'
+publishDir "${params.out}", mode:'move'
 
 input:
 	path isoformFasta
@@ -54,8 +54,8 @@ b = isoformFasta.getSimpleName()
 
 	
 """
-flair quantify -r $diffManifest -i $isoformFasta --quality 4 --temp_dir ${params.out}/temp --output ${b}.quantify
-rm -r ${params.out}/temp
+flair quantify -r $diffManifest -i $isoformFasta --quality 4 --temp_dir ${params.out}temp --output ${b}.quantify
+rm -r ${params.out}temp
 
 """
 
