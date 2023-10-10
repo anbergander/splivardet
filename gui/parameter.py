@@ -11,20 +11,20 @@ class Ui_Dialog(object):
         file = open('quantifySpliceVariants.nf', 'w')
         s = ["params { \n", "\n", "threads = " + str(self.spinBox.value()) + " \n", "desaltIndex = " + self.plainTextEdit.toPlainText()
              + "\n", "genomeFasta = " + self.plainTextEdit_8.toPlainText() + " \n", "annotationsGtf = " + self.plainTextEdit_5.toPlainText() + " \n",
-             "dirToFastqs = " + self.plainTextEdit_4.toPlainText() + " \n", "flairManifest = " + self.plainTextEdit_6.toPlainText()
-             + " \n", "out = " + self.plainTextEdit_7.toPlainText() + " \n", " \n", "}"]
+             "indexDir = " + self.plainTextEdit_11.toPlainText() + " \n", "dirToFastqs = " + self.plainTextEdit_4.toPlainText() + " \n",
+             "flairManifest = " + self.plainTextEdit_6.toPlainText() + " \n", "out = " + self.plainTextEdit_7.toPlainText() + " \n", " \n", "}"]
         file.writelines(s)
         file.close()
 
     def browseGtf(self):
-        fname = QFileDialog.getOpenFileName(self.horizontalLayoutWidget_4, "Open file", os.getenv('Home'), 'Gtf (*.gtf *.tab)')
+        fname = QFileDialog.getOpenFileName(self.horizontalLayoutWidget_4, "Open file", os.getenv('Home'), 'Gtf (*.gtf)')
         self.plainTextEdit_5.setPlainText(fname[0])
 
     def browseIndex(self):
         fname = QFileDialog.getExistingDirectory(self.horizontalLayoutWidget_3, "Select Directory", os.getenv('Home'))
         self.plainTextEdit.setPlainText(fname)
     def browseFasta(self):
-        fname = QFileDialog.getOpenFileName(self.horizontalLayoutWidget, "Open file", os.getenv('Home'), 'Fasta (*.fasta *.fa *.genomefasta)')
+        fname = QFileDialog.getOpenFileName(self.horizontalLayoutWidget, "Open file", os.getenv('Home'), 'Fasta (*.fasta) ;; Fasta (*.fa) ;; Genomefasta *.genomefasta)')
         self.plainTextEdit_8.setPlainText(fname[0])
 
     def browseDirectory(self):
@@ -35,9 +35,17 @@ class Ui_Dialog(object):
         fname = QFileDialog.getExistingDirectory(self.horizontalLayoutWidget_6, "Select Directory", os.getenv('Home'))
         self.plainTextEdit_7.setPlainText(fname)
 
+    def browseDirectoryForOutput(self):
+        fname = QFileDialog.getExistingDirectory(self.horizontalLayoutWidget_6, "Select Directory", os.getenv('Home'))
+        self.plainTextEdit_7.setPlainText(fname)
+
+    def browseDirectoryForIndex(self):
+        fname = QFileDialog.getExistingDirectory(self.horizontalLayoutWidget_6, "Select Directory", os.getenv('Home'))
+        self.plainTextEdit_11.setPlainText(fname)
+
     def checkIfFilled(self):
         if (self.plainTextEdit.toPlainText() == '' or self.plainTextEdit_4.toPlainText() == '' or self.plainTextEdit_5.toPlainText() == ''
-                or self.plainTextEdit_6.toPlainText() == '' or self.plainTextEdit_8.toPlainText() == ''):
+                or self.plainTextEdit_6.toPlainText() == '' or self.plainTextEdit_8.toPlainText() == '' or self.plainTextEdit_11.toPlainText() == ''):
             self.pushButton_9.setDisabled(True)
         else:
             self.pushButton_9.setDisabled(False)
@@ -52,7 +60,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.setFixedSize(545, 670)
+        Dialog.setFixedSize(545, 730)
 
         self.checkBox = QtWidgets.QCheckBox(parent=Dialog)
         self.checkBox.setGeometry(QtCore.QRect(35, 140, 150, 25))
@@ -204,6 +212,28 @@ class Ui_Dialog(object):
         self.pushButton_8.clicked.connect(self.browseFasta)
         self.horizontalLayout_8.addWidget(self.pushButton_8)
 
+        self.horizontalLayoutWidget_8 = QtWidgets.QWidget(parent=Dialog)
+        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(40, 600, 461, 41))
+        self.horizontalLayoutWidget_8.setObjectName("horizontalLayoutWidget_6")
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_8)
+        self.horizontalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_9.setObjectName("horizontalLayout_7")
+        self.label_10 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_8)
+        self.label_10.setObjectName("label_7")
+        self.label_10.setMinimumWidth(125)
+        self.horizontalLayout_9.addWidget(self.label_10)
+        self.plainTextEdit_11 = QtWidgets.QPlainTextEdit(parent=self.horizontalLayoutWidget_8)
+        self.plainTextEdit_11.setObjectName("plainTextEdit_11")
+        self.plainTextEdit_11.textChanged.connect(self.checkIfFilled)
+        self.plainTextEdit_11.setMinimumWidth(225)
+        self.plainTextEdit_11.setDisabled(True)
+        self.horizontalLayout_9.addWidget(self.plainTextEdit_11)
+        self.pushButton_10 = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_8)
+        self.pushButton_10.setObjectName("pushButton_7")
+        self.pushButton_10.setMaximumWidth(100)
+        self.pushButton_10.clicked.connect(self.browseDirectoryForIndex)
+        self.horizontalLayout_9.addWidget(self.pushButton_10)
+
 
         self.label_8 = QtWidgets.QLabel(parent=Dialog)
         self.label_8.setGeometry(QtCore.QRect(210, 30, 231, 20))
@@ -213,7 +243,7 @@ class Ui_Dialog(object):
         font.setPointSize(16)
         self.label_8.setFont(font)
         self.pushButton_9 = QtWidgets.QPushButton(parent=Dialog)
-        self.pushButton_9.setGeometry(QtCore.QRect(400, 600, 121, 41))
+        self.pushButton_9.setGeometry(QtCore.QRect(400, 670, 121, 41))
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("next-step-28.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.pushButton_9.setIcon(icon1)
@@ -248,7 +278,10 @@ class Ui_Dialog(object):
         self.label_8.setText(_translate("Dialog", "Select Parameters"))
         self.label_9.setText(_translate("Dialog", "Genome Fasta"))
         self.pushButton_8.setText(_translate("Dialog", "Browse"))
+        self.pushButton_10.setText(_translate("Dialog", "Browse"))
         self.pushButton_9.setText(_translate("Dialog", "Continue"))
+        self.plainTextEdit_11.setPlaceholderText(_translate("Dialog", "Path to Index"))
+        self.label_10.setText(_translate("Dialog", "Index Directory"))
 
 if __name__ == "__main__":
     import sys
