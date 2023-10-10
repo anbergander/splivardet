@@ -2,7 +2,7 @@ import csv
 import os
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtWidgets import QHeaderView, QFileDialog, QMessageBox
+from PyQt6.QtWidgets import QFileDialog, QMessageBox
 
 from parameter import Ui_Dialog
 

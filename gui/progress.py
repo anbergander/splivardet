@@ -21,7 +21,7 @@ class Ui_Progress(object):
         Progress.setFont(font)
 
         self.label = QtWidgets.QLabel(parent=Progress)
-        self.label.setGeometry(QtCore.QRect(120, 20, 261, 31))
+        self.label.setGeometry(QtCore.QRect(70, 20, 261, 31))
         self.label.setFont(font)
         self.label.setObjectName("label")
 
@@ -41,7 +41,7 @@ class Ui_Progress(object):
 
     def retranslateUi(self, Progress):
         _translate = QtCore.QCoreApplication.translate
-        self.label.setText(_translate("Progress", "Currently running..."))
+        self.label.setText(_translate("runDialog", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">Currently running...</span></p></body></html>"))
         Progress.setWindowTitle(_translate("Progress", "Progress"))
         self.pushButton.setText(_translate("Progress", "Cancel"))
 

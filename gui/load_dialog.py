@@ -69,7 +69,7 @@ class Ui_LoadDialog(object):
         self.pushButton_2.setText(_translate("LoadDialog", "Load"))
         LoadDialog.setWindowTitle(_translate("LoadDialog", "New Experiment"))
         self.label.setText(_translate("LoadDialog",
-                                      "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">Review your previous Experiment or</span></p><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">Start a new Experiment?</span></p></body></html>"))
+                                      "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">Review your Experiment or</span></p><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">Start a new Experiment?</span></p></body></html>"))
 
 if __name__ == "__main__":
     import sys

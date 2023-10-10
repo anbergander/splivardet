@@ -70,7 +70,7 @@ class Ui_LoadManifest(object):
         self.pushButton_2.setText(_translate("LoadDialog", "Load"))
         LoadDialog.setWindowTitle(_translate("LoadDialog", "Manifest"))
         self.label.setText(_translate("LoadDialog",
-                                      "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">Load Manifest or</span></p><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">create a new Manifest?</span></p></body></html>"))
+                                      "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">Load Manifest or</span></p><p align=\"center\"><span style=\" font-size:14pt; font-weight:600;\">Create a new Manifest?</span></p></body></html>"))
 
 if __name__ == "__main__":
     import sys

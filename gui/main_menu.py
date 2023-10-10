@@ -15,7 +15,7 @@ class Ui_Group(object):
         final = file.readlines()
         final = final[-3].split("out = ")[1]
         final = final.split("\n")[0]
-        self.loadCsvOnOpen(final + "/hallo.tsv")
+        #self.loadCsvOnOpen(final + "/hallo.tsv")
         self.pixmap = QPixmap(final + "/Bananas.svg")
         self.label.setPixmap(self.pixmap)
         self.webView.setUrl(QUrl("file:///" + final + "/result.pdf"))
