@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import gseapy as gp
@@ -5,7 +7,7 @@ import seaborn as sns
 import textwrap
 
 
-def rankingGO(file):
+def rankingGO(file, path):
     if ".csv" in file:
         res = pd.read_csv(file)
         ranking = res[['Gene', 'stat']].dropna().sort_values('stat', ascending=False)
@@ -23,10 +25,10 @@ def rankingGO(file):
         out_df = pd.DataFrame(out, columns=['Term', 'fdr', 'es', 'nes']).sort_values('fdr').reset_index(drop=True)
         pre_res.plot(terms=pre_res.res2d.Term[:5],
                      show_ranking=True,
-                     figsize=(3, 4), ofname="/home/ubuntu/splivardet/de/figures/go_gsea.svg")
+                     figsize=(3, 4), ofname=path+"/figures/go_gsea.svg")
         out_df['Term'] = out_df['Term'].str.replace("GO_Biological_Process_2021__", "")
-        out_df.to_csv("/home/ubuntu/splivardet/de/tables/go_gsea.tsv", sep='\t', index=False)
-        graphGsea(out_df)
+        out_df.to_csv(path + "/tables/go_gsea.tsv", sep='\t', index=False)
+        graphGsea(out_df, path)
     else:
         res = pd.read_table(file)
         ranking = res[['Gene', 'stat']].dropna().sort_values('stat', ascending=False)
@@ -45,12 +47,12 @@ def rankingGO(file):
         out_df = pd.DataFrame(out, columns=['Term', 'fdr', 'es', 'nes']).sort_values('fdr').reset_index(drop=True)
         pre_res.plot(terms=pre_res.res2d.Term[:5],
                      show_ranking=True,
-                     figsize=(3, 4), ofname="/home/ubuntu/splivardet/de/figures/go_gsea.svg")
+                     figsize=(3, 4), ofname=path + "/figures/go_gsea.svg")
         out_df['Term'] = out_df['Term'].str.replace("GO_Biological_Process_2021__", "")
-        out_df.to_csv("/home/ubuntu/splivardet/de/tables/go_gsea.tsv", sep='\t', index=False)
-        graphGsea(out_df)
+        out_df.to_csv(path + "/tables/go_gsea.tsv", sep='\t', index=False)
+        graphGsea(out_df, path)
 
-def graphGsea(out_df):
+def graphGsea(out_df, path):
     out_df = out_df.sort_values('nes')
     selected_go = out_df[0:10]
     sns.set(style="whitegrid", color_codes=True)
@@ -61,7 +63,7 @@ def graphGsea(out_df):
     ax.set_xlabel("Normalized Enrichment", fontsize=10)
     ax.set_title("Most downregulated terms")
     ax.set_yticklabels([textwrap.fill(e, 20) for e in selected_go['Term']])
-    plt.savefig("/home/ubuntu/splivardet/de/figures/go_terms_decreased.svg", format='svg')
+    plt.savefig(path + "/figures/go_terms_decreased.svg", format='svg')
     plt.show()
 
     selected_go = out_df.iloc[-10:]
@@ -73,11 +75,18 @@ def graphGsea(out_df):
     ax.set_xlabel("Normalized Enrichment", fontsize=10)
     ax.set_title("Most upregulated terms")
     ax.set_yticklabels([textwrap.fill(e, 20) for e in selected_go['Term']])
-    plt.savefig("/home/ubuntu/splivardet/de/figures/go_terms_enriched.svg", format='svg')
+    plt.savefig(path + "/figures/go_terms_enriched.svg", format='svg')
     plt.show()
 
-def main():
+def createDir(path):
+    isExist = os.path.exists(path)
+    if not isExist:
+        os.makedirs(path)
+        print("The new directory is created!")
+def main(path, data):
+    createDir(path + "/figures")
+    createDir(path + "/tables")
     print("Start GO")
-    rankingGO("/home/ubuntu/splivardet/de/tables/result_table.tsv")
+    rankingGO(data, path)
     print("Finished GO")
 

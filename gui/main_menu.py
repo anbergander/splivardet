@@ -53,7 +53,40 @@ class Ui_Group(object):
         if fname:
             self.pixmap3 = QPixmap(fname[0])
             # Add Pic to label
-            self.label3.setPixmap(self.pixmap3)
+            self.label_4.setPixmap(self.pixmap3)
+    def openPCA(self):
+        fname = QFileDialog.getOpenFileName(Group, "Open File", os.getenv('HOME'),
+                                            "SVG Files (*.svg);;PNG Files (*.png);;Jpg Files (*.jpg)")
+        # Open The Image
+        if fname:
+            self.pixmap2 = QPixmap(fname[0])
+            # Add Pic to label
+            self.label_2.setPixmap(self.pixmap2)
+    def openVolcano(self):
+        fname = QFileDialog.getOpenFileName(Group, "Open File", os.getenv('HOME'),
+                                            "SVG Files (*.svg);;PNG Files (*.png);;Jpg Files (*.jpg)")
+        # Open The Image
+        if fname:
+            self.pixmap4 = QPixmap(fname[0])
+            # Add Pic to label
+            self.label_3.setPixmap(self.pixmap4)
+    def openBarplot(self):
+        fname = QFileDialog.getOpenFileName(Group, "Open File", os.getenv('HOME'),
+                                            "SVG Files (*.svg);;PNG Files (*.png);;Jpg Files (*.jpg)")
+        # Open The Image
+        if fname:
+            self.pixmap5 = QPixmap(fname[0])
+            # Add Pic to label
+            self.label_5.setPixmap(self.pixmap5)
+
+    def openLinePlot(self):
+        fname = QFileDialog.getOpenFileName(Group, "Open File", os.getenv('HOME'),
+                                            "SVG Files (*.svg);;PNG Files (*.png);;Jpg Files (*.jpg)")
+        # Open The Image
+        if fname:
+            self.pixmap6 = QPixmap(fname[0])
+            # Add Pic to label
+            self.label_6.setPixmap(self.pixmap6)
 
     def loadCsvOnOpen(self, fileName):
         if fileName:
@@ -219,18 +252,12 @@ class Ui_Group(object):
         self.horizontalLayout.addWidget(self.label)
         self.tabWidget.addTab(self.statistics, "")
 
-        self.deTab = QtWidgets.QTabWidget()
-        self.deTab.setGeometry(QtCore.QRect(0, 0, 791, 631))
-        self.deTab.setObjectName("tabWidget")
         self.de = QtWidgets.QWidget()
         self.de.setObjectName("de")
         self.horizontalLayoutWidget3 = QtWidgets.QWidget(parent=self.de)
-        self.horizontalLayoutWidget3.resize(1500, 900)
+        self.horizontalLayoutWidget3.resize(2000, 900)
         self.horizontalLayoutWidget3.setObjectName("horizontalLayoutWidget")
-        self.horizontalLayout3 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget3)
-        self.horizontalLayout3.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout3.setObjectName("horizontalLayout")
-        self.verticalLayout3 = QtWidgets.QVBoxLayout()
+        self.verticalLayout3 = QtWidgets.QVBoxLayout(self.horizontalLayoutWidget3)
         self.query2 = QLineEdit()
         self.query2.setPlaceholderText("Search...")
         self.query2.textChanged.connect(self.search)
@@ -245,16 +272,47 @@ class Ui_Group(object):
         self.tableView2.horizontalHeader().setBackgroundRole(QPalette.ColorRole.Window)
         self.tableView2.setDropIndicatorShown(True)
         self.tableView2.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-
         self.verticalLayout3.addWidget(self.query2)
         self.verticalLayout3.addWidget(self.tableView2)
-        self.label3 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget3)
-        self.label3.setObjectName("label")
-        self.pixmap3 = QPixmap("Logo.png")
-        self.label3.setPixmap(self.pixmap)
-        self.horizontalLayout3.addLayout(self.verticalLayout3)
-        self.horizontalLayout3.addWidget(self.label3)
         self.tabWidget.addTab(self.de, "")
+
+        self.GeneExpression = QtWidgets.QWidget()
+        self.GeneExpression.setObjectName("GeneExpression")
+        self.horizontalLayoutWidget_2 = QtWidgets.QWidget(parent=self.GeneExpression)
+        self.horizontalLayoutWidget_2.resize(2000, 850)
+        self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_4 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_2)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout_2.addWidget(self.label_4)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.label_2 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_2)
+        self.label_2.setObjectName("label_2")
+        self.verticalLayout_2.addWidget(self.label_2)
+        self.label_3 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_2)
+        self.label_3.setObjectName("label_3")
+        self.verticalLayout_2.addWidget(self.label_3)
+        self.horizontalLayout_2.addLayout(self.verticalLayout_2)
+        self.tabWidget.addTab(self.GeneExpression, "")
+
+        self.tab = QtWidgets.QWidget()
+        self.tab.setObjectName("tab")
+        self.horizontalLayoutWidget_3 = QtWidgets.QWidget(parent=self.tab)
+        self.horizontalLayoutWidget_3.resize(1900, 800)
+        self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_3)
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.label_5 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_3)
+        self.label_5.setObjectName("label_5")
+        self.horizontalLayout_3.addWidget(self.label_5)
+        self.label_6 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_3)
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout_3.addWidget(self.label_6)
+        self.tabWidget.addTab(self.tab, "")
 
         self.report = QtWidgets.QWidget()
         self.report.setObjectName("report")
@@ -263,7 +321,6 @@ class Ui_Group(object):
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.layoutReport = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.layoutReport.setObjectName("layoutReport")
-
         self.webView = QWebEngineView(parent=self.verticalLayoutWidget)
         self.webView.settings().setAttribute(self.webView.settings().WebAttribute.PluginsEnabled, True)
         self.webView.settings().setAttribute(self.webView.settings().WebAttribute.PdfViewerEnabled, True)
@@ -301,10 +358,22 @@ class Ui_Group(object):
         self.actionStatistics.triggered.connect(self.openImage)
         self.actionDeTable = QtGui.QAction(parent=Group)
         self.actionDeTable.setObjectName("actionDeTable")
+        self.actionDeTable.triggered.connect(self.loadCsvDe)
         self.actionDeHeatmap = QtGui.QAction(parent=Group)
         self.actionDeHeatmap.setObjectName("actionDeHeatmap")
         self.actionDeHeatmap.triggered.connect(self.openHeatmap)
-        self.actionDeTable.triggered.connect(self.loadCsvDe)
+        self.actionDePCA = QtGui.QAction(parent=Group)
+        self.actionDePCA.setObjectName("actionDePCA")
+        self.actionDePCA.triggered.connect(self.openPCA)
+        self.actionDeVolcano = QtGui.QAction(parent=Group)
+        self.actionDeVolcano.setObjectName("actionDePCA")
+        self.actionDeVolcano.triggered.connect(self.openVolcano)
+        self.actionGOgraph = QtGui.QAction(parent=Group)
+        self.actionGOgraph.setObjectName("actionDePCA")
+        self.actionGOgraph.triggered.connect(self.openLinePlot)
+        self.actionGOgraphbar = QtGui.QAction(parent=Group)
+        self.actionGOgraphbar.setObjectName("actionDePCA")
+        self.actionGOgraphbar.triggered.connect(self.openBarplot)
         self.actionProject = QtGui.QAction(parent=Group)
         self.actionProject.setObjectName("actionProject")
         self.actionClose = QtGui.QAction(parent=Group)
@@ -315,16 +384,22 @@ class Ui_Group(object):
         self.actionGo = QtGui.QAction(parent=Group)
         self.actionGo.setObjectName("actionGo")
         self.actionGo.triggered.connect(self.openWindow)
-        self.actionDeHeatmap = QtGui.QAction(parent=Group)
         self.isoformAllAction = QtGui.QAction(parent=Group)
         self.isoformAllAction.setObjectName("isoformAllAction")
-        self.menuOpen.addAction(self.actionProject)
-        self.menuOpen.addSeparator()
+        #self.menuOpen.addAction(self.actionProject)
+        #self.menuOpen.addSeparator()
         self.menuOpen.addAction(self.actionCSV)
         self.menuOpen.addAction(self.actionStatistics)
-        self.menuOpen.addAction(self.actionReport)
+        self.menuOpen.addSeparator()
         self.menuOpen.addAction(self.actionDeTable)
         self.menuOpen.addAction(self.actionDeHeatmap)
+        self.menuOpen.addAction(self.actionDePCA)
+        self.menuOpen.addAction(self.actionDeVolcano)
+        self.menuOpen.addSeparator()
+        self.menuOpen.addAction(self.actionGOgraphbar)
+        self.menuOpen.addAction(self.actionGOgraph)
+        self.menuOpen.addSeparator()
+        self.menuOpen.addAction(self.actionReport)
         self.menuFile.addAction(self.menuOpen.menuAction())
         self.menuFile.addAction(self.actionClose)
         self.menuIsoform.addAction(self.isoformAllAction)
@@ -349,20 +424,26 @@ class Ui_Group(object):
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuOpen.setTitle(_translate("MainWindow", "Open"))
         self.menuIsoform.setTitle(_translate("MainWindow", "Isoform"))
-        self.menuDE.setTitle(_translate("MainWindow", "Differential Expression"))
+        self.menuDE.setTitle(_translate("MainWindow", "Differential Gene Expression"))
         self.menuPerform.setTitle(_translate("MainWindow", "Perform"))
         self.actionCSV.setText(_translate("MainWindow", "Isoform Table"))
         self.actionReport.setText(_translate("MainWindow", "Report"))
         self.actionStatistics.setText(_translate("MainWindow", "Isoform Plots"))
-        self.actionDeTable.setText(_translate("MainWindow", "DE Table"))
-        self.actionDeHeatmap.setText(_translate("MainWindow", "DE Heatmap"))
+        self.actionDeTable.setText(_translate("MainWindow", "Differential Gene Expression Table"))
+        self.actionDeHeatmap.setText(_translate("MainWindow", "Differential Gene Expression Heatmap"))
         self.actionProject.setText(_translate("MainWindow", "Project"))
         self.actionClose.setText(_translate("MainWindow", "Close"))
         self.actionDe.setText(_translate("MainWindow", "Differential Expression Analysis"))
         self.actionGo.setText(_translate("MainWindow", "GO Terms"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.statistics), _translate("MainWindow", "Statistics"))
+        self.actionDePCA.setText(_translate("MainWindow", "Differential Gene Expression PCA"))
+        self.actionDeVolcano.setText(_translate("MainWindow", "Differential Gene Expression Volcano"))
+        self.actionGOgraphbar.setText(_translate("MainWindow", "GO Terms Barplot"))
+        self.actionGOgraph.setText(_translate("MainWindow", "GO Terms Line Plot"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.statistics), _translate("MainWindow", "Isoform"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.report), _translate("MainWindow", "Report"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.de), _translate("MainWindow", "Differential Gene Expression"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.de), _translate("MainWindow", "Differential Gene Expression Table"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.GeneExpression), _translate("MainWindow", "Differential Gene Expression"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab),_translate("MainWindow", "GO Terms"))
 
 
 if __name__ == "__main__":
