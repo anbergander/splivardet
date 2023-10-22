@@ -8,15 +8,27 @@ from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QFileDialog, QTableWidgetItem, QAbstractItemView, QLineEdit
 import sys
 
+from gui.de_dialog import Ui_DE
+from gui.go_dialog import Ui_GO
+
 
 class Ui_Group(object):
+    def openWindow(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_GO()
+        self.ui.setupUi(self.window)
+        self.window.show()
+    def openWindowDe(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_DE()
+        self.ui.setupUi(self.window)
+        self.window.show()
     def getOutputPath(self):
         file = open('quantifySpliceVariants.nf', 'r')
         final = file.readlines()
         final = final[-3].split("out = ")[1]
         final = final.split("\n")[0]
-        #self.loadCsvOnOpen(final + "/hallo.tsv")
-        self.pixmap = QPixmap(final + "/Bananas.svg")
+        self.pixmap = QPixmap(final + "/figures/voilin.svg")
         self.label.setPixmap(self.pixmap)
         self.webView.setUrl(QUrl("file:///" + final + "/result.pdf"))
         file.close()
@@ -30,11 +42,18 @@ class Ui_Group(object):
     def openImage(self):
         fname = QFileDialog.getOpenFileName(Group, "Open File", os.getenv('HOME'),
                                             "SVG Files (*.svg);;PNG Files (*.png);;Jpg Files (*.jpg)")
-        # Open The Image
         if fname:
             self.pixmap = QPixmap(fname[0])
-            # Add Pic to label
             self.label.setPixmap(self.pixmap)
+
+    def openHeatmap(self):
+        fname = QFileDialog.getOpenFileName(Group, "Open File", os.getenv('HOME'),
+                                            "SVG Files (*.svg);;PNG Files (*.png);;Jpg Files (*.jpg)")
+        # Open The Image
+        if fname:
+            self.pixmap3 = QPixmap(fname[0])
+            # Add Pic to label
+            self.label3.setPixmap(self.pixmap3)
 
     def loadCsvOnOpen(self, fileName):
         if fileName:
@@ -47,9 +66,6 @@ class Ui_Group(object):
                 for i in range(len(df.index)):
                     for j in range(len(df.columns)):
                         self.tableView.setItem(i, j, QTableWidgetItem(str(df.iat[i, j])))
-                    for j in range(len(df.columns)):
-                        m = QTableWidgetItem(header[j])
-                        self.tableView.setHorizontalHeaderItem(j, m)
                 self.tableView.selectRow(0)
                 self.tableView.resizeColumnsToContents()
                 self.tableView.resizeRowsToContents()
@@ -69,9 +85,6 @@ class Ui_Group(object):
                 for i in range(len(df.index)):
                     for j in range(len(df.columns)):
                         self.tableView.setItem(i, j, QTableWidgetItem(str(df.iat[i, j])))
-                        for j in range(len(df.columns)):
-                            m = QTableWidgetItem(header[j])
-                            self.tableView.setHorizontalHeaderItem(j, m)
                 self.tableView.selectRow(0)
                 self.tableView.resizeColumnsToContents()
                 self.tableView.resizeRowsToContents()
@@ -90,6 +103,53 @@ class Ui_Group(object):
                                                                      "TXT Files (*.txt) ;; TAB Files (*.tab)")
         if fileName:
             self.loadCsvOnOpen(fileName)
+    def loadCsvDe(self):
+        fileName, _ = QFileDialog.getOpenFileName(Group, "Open CSV",
+                                                  os.getenv('Home'), "CSV Files (*.csv);; TSV Files (*.tsv);; "
+                                                                     "TXT Files (*.txt) ;; TAB Files (*.tab)")
+        if fileName:
+            self.loadDeTable(fileName)
+    def loadDeTable(self, fileName):
+        if fileName:
+            if ".csv" in fileName:
+                df = pd.read_csv(fileName)
+                header = df.iloc[0]
+                df = df[1:]
+                self.tableView2.setColumnCount(len(df.columns))
+                self.tableView2.setRowCount(len(df.index))
+                for i in range(len(df.index)):
+                    for j in range(len(df.columns)):
+                        self.tableView2.setItem(i, j, QTableWidgetItem(str(df.iat[i, j])))
+                self.tableView2.selectRow(0)
+                self.tableView2.resizeColumnsToContents()
+                self.tableView2.resizeRowsToContents()
+                col_headers = ['Gene', 'Base Mean', 'log2-Fold Change', 'lfcSE', 'Stat', 'P-value', 'Padj']
+                self.tableView2.setHorizontalHeaderLabels(col_headers)
+                self.tableView2.sortItems(3, order=Qt.SortOrder.AscendingOrder)
+                self.tableView2.setColumnWidth(0, 100)
+                self.tableView2.setColumnWidth(1, 100)
+                self.tableView2.setColumnWidth(2, 100)
+                self.tableView2.setColumnWidth(3, 100)
+                self.tableView2.setColumnWidth(4, 100)
+            else:
+                df = pd.read_table(fileName, sep='\t', lineterminator="\n")
+                header = df.iloc[0]
+                self.tableView2.setColumnCount(len(df.columns))
+                self.tableView2.setRowCount(len(df.index))
+                for i in range(len(df.index)):
+                    for j in range(len(df.columns)):
+                        self.tableView2.setItem(i, j, QTableWidgetItem(str(df.iat[i, j])))
+                self.tableView2.selectRow(0)
+                self.tableView2.resizeColumnsToContents()
+                self.tableView2.resizeRowsToContents()
+                col_headers = ['Gene', 'Base Mean', 'log2-Fold Change', 'lfcSE', 'Stat', 'P-value', 'Padj']
+                self.tableView2.setHorizontalHeaderLabels(col_headers)
+                self.tableView2.sortItems(3, order=Qt.SortOrder.AscendingOrder)
+                self.tableView2.setColumnWidth(0, 100)
+                self.tableView2.setColumnWidth(1, 100)
+                self.tableView2.setColumnWidth(2, 100)
+                self.tableView2.setColumnWidth(3, 100)
+                self.tableView2.setColumnWidth(4, 100)
 
     def search(self, s):
         # Clear current selection.
@@ -107,7 +167,7 @@ class Ui_Group(object):
     def setupUi(self, Group):
         self.window = QtWidgets.QMainWindow()
         Group.setObjectName("Group")
-        Group.showFullScreen()
+        Group.resize(900, 1000)
         font = QtGui.QFont()
         font.setFamily("Calibri")
         font.setPointSize(16)
@@ -223,6 +283,9 @@ class Ui_Group(object):
         self.menuOpen = QtWidgets.QMenu(parent=self.menuFile)
         self.menuIsoform = QtWidgets.QMenu(parent=self.menubar)
         self.menuIsoform.setObjectName("menuIsoform")
+        self.menuDE = QtWidgets.QMenu(parent=self.menubar)
+        self.menuDE.setObjectName("menuDE")
+        self.menuPerform = QtWidgets.QMenu(parent=self.menuDE)
         Group.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=Group)
         self.statusbar.setObjectName("statusbar")
@@ -236,11 +299,23 @@ class Ui_Group(object):
         self.actionStatistics = QtGui.QAction(parent=Group)
         self.actionStatistics.setObjectName("actionStatistics")
         self.actionStatistics.triggered.connect(self.openImage)
+        self.actionDeTable = QtGui.QAction(parent=Group)
+        self.actionDeTable.setObjectName("actionDeTable")
+        self.actionDeHeatmap = QtGui.QAction(parent=Group)
+        self.actionDeHeatmap.setObjectName("actionDeHeatmap")
+        self.actionDeHeatmap.triggered.connect(self.openHeatmap)
+        self.actionDeTable.triggered.connect(self.loadCsvDe)
         self.actionProject = QtGui.QAction(parent=Group)
         self.actionProject.setObjectName("actionProject")
         self.actionClose = QtGui.QAction(parent=Group)
         self.actionClose.setObjectName("actionClose")
-        self.actionClose.triggered.connect(quit)
+        self.actionDe = QtGui.QAction(parent=Group)
+        self.actionDe.setObjectName("actionDe")
+        self.actionDe.triggered.connect(self.openWindowDe)
+        self.actionGo = QtGui.QAction(parent=Group)
+        self.actionGo.setObjectName("actionGo")
+        self.actionGo.triggered.connect(self.openWindow)
+        self.actionDeHeatmap = QtGui.QAction(parent=Group)
         self.isoformAllAction = QtGui.QAction(parent=Group)
         self.isoformAllAction.setObjectName("isoformAllAction")
         self.menuOpen.addAction(self.actionProject)
@@ -248,12 +323,18 @@ class Ui_Group(object):
         self.menuOpen.addAction(self.actionCSV)
         self.menuOpen.addAction(self.actionStatistics)
         self.menuOpen.addAction(self.actionReport)
+        self.menuOpen.addAction(self.actionDeTable)
+        self.menuOpen.addAction(self.actionDeHeatmap)
         self.menuFile.addAction(self.menuOpen.menuAction())
         self.menuFile.addAction(self.actionClose)
         self.menuIsoform.addAction(self.isoformAllAction)
         self.menuIsoform.addSeparator()
+        self.menuPerform.addAction(self.actionDe)
+        self.menuPerform.addAction(self.actionGo)
+        self.menuDE.addAction(self.menuPerform.menuAction())
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuIsoform.menuAction())
+        self.menubar.addAction(self.menuDE.menuAction())
 
         self.getOutputPath()
 
@@ -267,11 +348,18 @@ class Ui_Group(object):
         Group.setWindowTitle(_translate("Group", "Main Menu"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuOpen.setTitle(_translate("MainWindow", "Open"))
-        self.actionCSV.setText(_translate("MainWindow", "CSV"))
+        self.menuIsoform.setTitle(_translate("MainWindow", "Isoform"))
+        self.menuDE.setTitle(_translate("MainWindow", "Differential Expression"))
+        self.menuPerform.setTitle(_translate("MainWindow", "Perform"))
+        self.actionCSV.setText(_translate("MainWindow", "Isoform Table"))
         self.actionReport.setText(_translate("MainWindow", "Report"))
-        self.actionStatistics.setText(_translate("MainWindow", "Statistics"))
+        self.actionStatistics.setText(_translate("MainWindow", "Isoform Plots"))
+        self.actionDeTable.setText(_translate("MainWindow", "DE Table"))
+        self.actionDeHeatmap.setText(_translate("MainWindow", "DE Heatmap"))
         self.actionProject.setText(_translate("MainWindow", "Project"))
         self.actionClose.setText(_translate("MainWindow", "Close"))
+        self.actionDe.setText(_translate("MainWindow", "Differential Expression Analysis"))
+        self.actionGo.setText(_translate("MainWindow", "GO Terms"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.statistics), _translate("MainWindow", "Statistics"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.report), _translate("MainWindow", "Report"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.de), _translate("MainWindow", "Differential Gene Expression"))

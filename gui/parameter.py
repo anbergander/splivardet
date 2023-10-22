@@ -24,7 +24,7 @@ class Ui_Dialog(object):
         fname = QFileDialog.getExistingDirectory(self.horizontalLayoutWidget_3, "Select Directory", os.getenv('Home'))
         self.plainTextEdit.setPlainText(fname)
     def browseFasta(self):
-        fname = QFileDialog.getOpenFileName(self.horizontalLayoutWidget, "Open file", os.getenv('Home'), 'Fasta (*.fasta) ;; Fasta (*.fa) ;; Genomefasta *.genomefasta)')
+        fname = QFileDialog.getOpenFileName(self.horizontalLayoutWidget, "Open file", os.getenv('Home'), 'Fasta (*.fasta) ;; Fasta (*.fa) ;; Genomefasta (*.genomefasta)')
         self.plainTextEdit_8.setPlainText(fname[0])
 
     def browseDirectory(self):
@@ -35,9 +35,6 @@ class Ui_Dialog(object):
         fname = QFileDialog.getExistingDirectory(self.horizontalLayoutWidget_6, "Select Directory", os.getenv('Home'))
         self.plainTextEdit_7.setPlainText(fname)
 
-    def browseDirectoryForOutput(self):
-        fname = QFileDialog.getExistingDirectory(self.horizontalLayoutWidget_6, "Select Directory", os.getenv('Home'))
-        self.plainTextEdit_7.setPlainText(fname)
 
     def browseDirectoryForIndex(self):
         fname = QFileDialog.getExistingDirectory(self.horizontalLayoutWidget_6, "Select Directory", os.getenv('Home'))
