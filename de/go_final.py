@@ -57,7 +57,7 @@ def graphGsea(out_df, path):
     selected_go = out_df[0:10]
     sns.set(style="whitegrid", color_codes=True)
     plt.figure(figsize=(18, 14))
-    pal = sns.color_palette("rocket", len(selected_go))
+    pal = sns.color_palette("Blues", len(selected_go))
     ax = sns.barplot(data=selected_go, x='nes', y='Term', hue='Term', legend=False, palette=pal)
     ax.set_ylabel("Term", fontsize=10)
     ax.set_xlabel("Normalized Enrichment", fontsize=10)
@@ -69,7 +69,7 @@ def graphGsea(out_df, path):
     selected_go = out_df.iloc[-10:]
     sns.set(style="whitegrid", color_codes=True)
     plt.figure(figsize=(18, 14))
-    pal = sns.color_palette("rocket", len(selected_go))
+    pal = sns.color_palette("Blues", len(selected_go))
     ax = sns.barplot(data=selected_go, x='nes', y='Term', hue='Term', legend=False, palette=pal)
     ax.set_ylabel("Term", fontsize=10)
     ax.set_xlabel("Normalized Enrichment", fontsize=10)
