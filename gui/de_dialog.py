@@ -41,7 +41,7 @@ class Ui_DE(object):
         QMessageBox.information(self.verticalLayoutWidget, "Done", "DE was performed")
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(500, 256)
+        Dialog.setFixedSize(500, 256)
         self.label = QtWidgets.QLabel(parent=Dialog)
         self.label.setGeometry(QtCore.QRect(100, 10, 400, 20))
         self.label.setObjectName("label")

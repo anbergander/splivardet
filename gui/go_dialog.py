@@ -25,7 +25,7 @@ class Ui_GO(object):
         go_final.main(self.textEdit_2.toPlainText(), self.textEdit.toPlainText())
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(470, 225)
+        Dialog.setFixedSize(470, 225)
         self.label = QtWidgets.QLabel(parent=Dialog)
         self.label.setGeometry(QtCore.QRect(200, 10, 100, 20))
         self.label.setObjectName("label")

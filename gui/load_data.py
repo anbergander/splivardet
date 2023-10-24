@@ -2,6 +2,7 @@ import os
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtCore import QUrl
+from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QFileDialog
 from menu import Ui_Main
 
@@ -12,9 +13,37 @@ class Ui_LoadData(object):
         self.ui = Ui_Main()
         self.ui.setupUi(self.window)
         pathReport = self.textEdit.toPlainText()
+        pathDeTable = self.textEdit_2.toPlainText()
+        pathDeHeatmap = self.textEdit_3.toPlainText()
+        pathDeVolcano = self.textEdit_4.toPlainText()
+        pathDePCA = self.textEdit_5.toPlainText()
+        pathGOTable = self.textEdit_6.toPlainText()
+        pathEnrichment = self.textEdit_7.toPlainText()
+        pathBarPlot = self.textEdit_8.toPlainText()
         if pathReport:
             pathReport.replace("\\", "/")
             self.ui.webView.setUrl(QUrl("file:///" + pathReport))
+        if pathDeTable:
+            self.ui.loadDeTable(pathDeTable)
+        if pathDeHeatmap:
+            self.ui.pixmap = QPixmap(pathDeHeatmap)
+            self.ui.label_4.setPixmap(self.ui.pixmap)
+        if pathDeVolcano:
+            self.ui.pixmap2 = QPixmap(pathDeVolcano)
+            self.ui.label_3.setPixmap(self.ui.pixmap2)
+        if pathDePCA:
+            self.ui.pixmap3 = QPixmap(pathDePCA)
+            self.ui.label_2.setPixmap(self.ui.pixmap3)
+        if pathGOTable:
+            self.ui.loadGoTable(pathGOTable)
+        if pathEnrichment:
+            self.ui.pixmap4 = QPixmap(pathEnrichment)
+            self.ui.label_6.setPixmap(self.ui.pixmap4)
+        if pathBarPlot:
+            self.ui.pixmap5 = QPixmap(pathBarPlot)
+            self.ui.label_5.setPixmap(self.ui.pixmap5)
+
+
         self.window.show()
 
     def browseFile(self):
@@ -22,35 +51,48 @@ class Ui_LoadData(object):
         self.textEdit.setText(fname[0])
 
     def browseGeneExpression(self):
-        dialog = QFileDialog()
-        dialog.setNameFilter("CSV (*.csv *.tsv *.txt)")
         fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'), "CSV Files (*.csv);; TSV Files (*.tsv);; "
                                                                      "TXT Files (*.txt) ;; TAB Files (*.tab)")
         self.textEdit_2.setText(fname[0])
 
     def browseHeatmap(self):
-        fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'), 'PDF File (*.pdf)')
+        fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'), 'SVG File (*.svg)')
         self.textEdit_3.setText(fname[0])
 
-    def browseIsoformSheet(self):
-        fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'), 'PDF File (*.pdf)')
+    def browseVolcano(self):
+        fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'), 'SVG File (*.svg)')
+        self.textEdit_4.setText(fname[0])
+
+    def browsePCA(self):
+        fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'), 'SVG File (*.svg)')
         self.textEdit_5.setText(fname[0])
 
-    def browseIsoformTable(self):
-        fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'), "CSV Files (*.csv);; TSV Files (*.tsv);; "
-                                                                     "TXT Files (*.txt) ;; TAB Files (*.tab)")
-        self.textEdit_4.setText(fname[0])
+    def browseGOTable(self):
+        fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'),
+                                            "CSV Files (*.csv);; TSV Files (*.tsv);; "
+                                            "TXT Files (*.txt) ;; TAB Files (*.tab)")
+        self.textEdit_6.setText(fname[0])
+
+    def browseGOEnrichment(self):
+        fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'), 'SVG File (*.svg)')
+        self.textEdit_7.setText(fname[0])
+
+    def browseGOBarplot(self):
+        fname = QFileDialog.getOpenFileName(self.centralwidget, "Open file", os.getenv('Home'), 'SVG File (*.svg)')
+        self.textEdit_8.setText(fname[0])
 
     def checkIfFilled(self):
         if (self.textEdit.toPlainText() == '' and self.textEdit_2.toPlainText() == '' and self.textEdit_3.toPlainText() == ''
-                and self.textEdit_4.toPlainText() == '' and self.textEdit_5.toPlainText() == ''):
+                and self.textEdit_4.toPlainText() == '' and self.textEdit_5.toPlainText() == '' and self.textEdit_6.toPlainText() == ''
+                and self.textEdit_7.toPlainText() == '' and self.textEdit_8.toPlainText() == '' and self.textEdit_9.toPlainText() == ''
+                and self.textEdit_10.toPlainText() == ''):
             self.pushButton_6.setDisabled(True)
         else:
             self.pushButton_6.setDisabled(False)
 
     def setupUi(self, LoadWindow):
         LoadWindow.setObjectName("MainWindow")
-        LoadWindow.setFixedSize(650, 485)
+        LoadWindow.setFixedSize(650, 900)
         self.centralwidget = QtWidgets.QWidget(parent=LoadWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
@@ -131,18 +173,18 @@ class Ui_LoadData(object):
         self.horizontalLayout_4.addWidget(self.label_4)
         self.textEdit_4 = QtWidgets.QTextEdit(parent=self.horizontalLayoutWidget_4)
         self.textEdit_4.setObjectName("textEdit_4")
-        self.textEdit_4.setPlaceholderText("Optional: Path to Isoform Data Table")
+        self.textEdit_4.setPlaceholderText("Optional: Path to Volcano Plot")
         self.textEdit_4.setMinimumWidth(250)
         self.textEdit_4.textChanged.connect(self.checkIfFilled)
         self.textEdit_4.setDisabled(True)
         self.horizontalLayout_4.addWidget(self.textEdit_4)
         self.pushButton_4 = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_4)
         self.pushButton_4.setObjectName("pushButton_4")
-        self.pushButton_4.clicked.connect(self.browseIsoformTable)
+        self.pushButton_4.clicked.connect(self.browseVolcano)
         self.pushButton_4.setMaximumWidth(100)
         self.horizontalLayout_4.addWidget(self.pushButton_4)
         self.horizontalLayoutWidget_5 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.horizontalLayoutWidget_5.setGeometry(QtCore.QRect(50, 332, 560, 41))
+        self.horizontalLayoutWidget_5.setGeometry(QtCore.QRect(50, 330, 560, 41))
         self.horizontalLayoutWidget_5.setObjectName("horizontalLayoutWidget_5")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_5)
         self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
@@ -153,7 +195,7 @@ class Ui_LoadData(object):
         self.horizontalLayout_5.addWidget(self.label_5)
         self.textEdit_5 = QtWidgets.QTextEdit(parent=self.horizontalLayoutWidget_5)
         self.textEdit_5.setObjectName("textEdit_5")
-        self.textEdit_5.setPlaceholderText("Optional: Path to Isoform Data")
+        self.textEdit_5.setPlaceholderText("Optional: Path to PCA")
         self.textEdit_5.setMinimumWidth(250)
         self.textEdit_5.setDisabled(True)
         self.textEdit_5.textChanged.connect(self.checkIfFilled)
@@ -161,8 +203,122 @@ class Ui_LoadData(object):
         self.pushButton_5 = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_5)
         self.pushButton_5.setObjectName("pushButton_5")
         self.pushButton_5.setMaximumWidth(100)
-        self.pushButton_5.clicked.connect(self.browseIsoformSheet)
+        self.pushButton_5.clicked.connect(self.browsePCA)
         self.horizontalLayout_5.addWidget(self.pushButton_5)
+
+        self.horizontalLayoutWidget_6 = QtWidgets.QWidget(parent=self.centralwidget)
+        self.horizontalLayoutWidget_6.setGeometry(QtCore.QRect(50, 400, 560, 41))
+        self.horizontalLayoutWidget_6.setObjectName("horizontalLayoutWidget_6")
+        self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_6)
+        self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.label_7 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_6)
+        self.label_7.setObjectName("label_7")
+        self.label_7.setMinimumWidth(180)
+        self.horizontalLayout_6.addWidget(self.label_7)
+        self.textEdit_6 = QtWidgets.QTextEdit(parent=self.horizontalLayoutWidget_6)
+        self.textEdit_6.setObjectName("textEdit_6")
+        self.textEdit_6.setPlaceholderText("Optional: GO Term Table")
+        self.textEdit_6.setMinimumWidth(250)
+        self.textEdit_6.setDisabled(True)
+        self.textEdit_6.textChanged.connect(self.checkIfFilled)
+        self.horizontalLayout_6.addWidget(self.textEdit_6)
+        self.pushButton_7 = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_6)
+        self.pushButton_7.setObjectName("pushButton_5")
+        self.pushButton_7.setMaximumWidth(100)
+        self.pushButton_7.clicked.connect(self.browseGOTable)
+        self.horizontalLayout_6.addWidget(self.pushButton_7)
+
+        self.horizontalLayoutWidget_7 = QtWidgets.QWidget(parent=self.centralwidget)
+        self.horizontalLayoutWidget_7.setGeometry(QtCore.QRect(50, 470, 560, 41))
+        self.horizontalLayoutWidget_7.setObjectName("horizontalLayoutWidget_6")
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_7)
+        self.horizontalLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_7.setObjectName("horizontalLayout_6")
+        self.label_8 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_7)
+        self.label_8.setObjectName("label_8")
+        self.label_8.setMinimumWidth(180)
+        self.horizontalLayout_7.addWidget(self.label_8)
+        self.textEdit_7 = QtWidgets.QTextEdit(parent=self.horizontalLayoutWidget_7)
+        self.textEdit_7.setObjectName("textEdit_7")
+        self.textEdit_7.setPlaceholderText("Optional: Path to Enrichment Plot")
+        self.textEdit_7.setMinimumWidth(250)
+        self.textEdit_7.setDisabled(True)
+        self.textEdit_7.textChanged.connect(self.checkIfFilled)
+        self.horizontalLayout_7.addWidget(self.textEdit_7)
+        self.pushButton_8 = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_7)
+        self.pushButton_8.setObjectName("pushButton_5")
+        self.pushButton_8.setMaximumWidth(100)
+        self.pushButton_8.clicked.connect(self.browseGOEnrichment)
+        self.horizontalLayout_7.addWidget(self.pushButton_8)
+
+        self.horizontalLayoutWidget_8 = QtWidgets.QWidget(parent=self.centralwidget)
+        self.horizontalLayoutWidget_8.setGeometry(QtCore.QRect(50, 540, 560, 41))
+        self.horizontalLayoutWidget_8.setObjectName("horizontalLayoutWidget_6")
+        self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_8)
+        self.horizontalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_8.setObjectName("horizontalLayout_6")
+        self.label_9 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_8)
+        self.label_9.setObjectName("label_9")
+        self.label_9.setMinimumWidth(180)
+        self.horizontalLayout_8.addWidget(self.label_9)
+        self.textEdit_8 = QtWidgets.QTextEdit(parent=self.horizontalLayoutWidget_8)
+        self.textEdit_8.setObjectName("textEdit_7")
+        self.textEdit_8.setPlaceholderText("Optional: Path to Barplot")
+        self.textEdit_8.setMinimumWidth(250)
+        self.textEdit_8.setDisabled(True)
+        self.textEdit_8.textChanged.connect(self.checkIfFilled)
+        self.horizontalLayout_8.addWidget(self.textEdit_8)
+        self.pushButton_9 = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_8)
+        self.pushButton_9.setObjectName("pushButton_5")
+        self.pushButton_9.setMaximumWidth(100)
+        self.pushButton_9.clicked.connect(self.browseGOBarplot)
+        self.horizontalLayout_8.addWidget(self.pushButton_9)
+
+        self.horizontalLayoutWidget_9 = QtWidgets.QWidget(parent=self.centralwidget)
+        self.horizontalLayoutWidget_9.setGeometry(QtCore.QRect(50, 610, 560, 41))
+        self.horizontalLayoutWidget_9.setObjectName("horizontalLayoutWidget_9")
+        self.horizontalLayout_9 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_9)
+        self.horizontalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_9.setObjectName("horizontalLayout_9")
+        self.label_10 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_9)
+        self.label_10.setObjectName("label_9")
+        self.label_10.setMinimumWidth(180)
+        self.horizontalLayout_9.addWidget(self.label_10)
+        self.textEdit_9 = QtWidgets.QTextEdit(parent=self.horizontalLayoutWidget_9)
+        self.textEdit_9.setObjectName("textEdit_7")
+        self.textEdit_9.setPlaceholderText("Optional: Path to Isoform Expression Table")
+        self.textEdit_9.setMinimumWidth(250)
+        self.textEdit_9.setDisabled(True)
+        self.textEdit_9.textChanged.connect(self.checkIfFilled)
+        self.horizontalLayout_9.addWidget(self.textEdit_9)
+        self.pushButton_10 = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_9)
+        self.pushButton_10.setObjectName("pushButton_5")
+        self.pushButton_10.setMaximumWidth(100)
+        self.horizontalLayout_9.addWidget(self.pushButton_10)
+
+        self.horizontalLayoutWidget_10 = QtWidgets.QWidget(parent=self.centralwidget)
+        self.horizontalLayoutWidget_10.setGeometry(QtCore.QRect(50, 680, 560, 41))
+        self.horizontalLayoutWidget_10.setObjectName("horizontalLayoutWidget_10")
+        self.horizontalLayout_10 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_10)
+        self.horizontalLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_10.setObjectName("horizontalLayout_9")
+        self.label_11 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_10)
+        self.label_11.setObjectName("label_9")
+        self.label_11.setMinimumWidth(180)
+        self.horizontalLayout_10.addWidget(self.label_11)
+        self.textEdit_10 = QtWidgets.QTextEdit(parent=self.horizontalLayoutWidget_10)
+        self.textEdit_10.setObjectName("textEdit_7")
+        self.textEdit_10.setPlaceholderText("Optional: Path to Isoform Heatmap")
+        self.textEdit_10.setMinimumWidth(250)
+        self.textEdit_10.setDisabled(True)
+        self.textEdit_10.textChanged.connect(self.checkIfFilled)
+        self.horizontalLayout_10.addWidget(self.textEdit_10)
+        self.pushButton_11 = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_10)
+        self.pushButton_11.setObjectName("pushButton_5")
+        self.pushButton_11.setMaximumWidth(100)
+        self.horizontalLayout_10.addWidget(self.pushButton_11)
+
         self.label_6 = QtWidgets.QLabel(parent=self.centralwidget)
         self.label_6.setGeometry(QtCore.QRect(275, 10, 150, 30))
         self.label_6.setObjectName("label_6")
@@ -174,7 +330,7 @@ class Ui_LoadData(object):
         self.pushButton_6 = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton_6.clicked.connect(self.openWindow)
         self.pushButton_6.clicked.connect(LoadWindow.close)
-        self.pushButton_6.setGeometry(QtCore.QRect(510, 400, 121, 41))
+        self.pushButton_6.setGeometry(QtCore.QRect(510, 830, 121, 41))
         font = QtGui.QFont()
         font.setFamily("Calibri")
         font.setPointSize(10)
@@ -203,14 +359,24 @@ class Ui_LoadData(object):
         self.pushButton.setText(_translate("LoadWindow", "Browse"))
         self.label_2.setText(_translate("LoadWindow", "Gene Expression Table"))
         self.pushButton_2.setText(_translate("LoadWindow", "Browse"))
-        self.label_3.setText(_translate("LoadWindow", "Heatmap"))
+        self.label_3.setText(_translate("LoadWindow", "DE Heatmap"))
         self.pushButton_3.setText(_translate("LoadWindow", "Browse"))
-        self.label_4.setText(_translate("LoadWindow", "Isoform Table"))
+        self.label_4.setText(_translate("LoadWindow", "DE Volcano"))
         self.pushButton_4.setText(_translate("LoadWindow", "Browse"))
-        self.label_5.setText(_translate("LoadWindow", "Isoform Graphs"))
+        self.label_5.setText(_translate("LoadWindow", "DE PCA"))
         self.pushButton_5.setText(_translate("LoadWindow", "Browse"))
         self.label_6.setText(_translate("LoadWindow", "Load Data"))
         self.pushButton_6.setText(_translate("LoadWindow", "Load"))
+        self.pushButton_7.setText(_translate("LoadWindow", "Browse"))
+        self.label_7.setText(_translate("LoadWindow", "GO Term Table"))
+        self.label_8.setText(_translate("LoadWindow", "GO Term Enrichment Plot"))
+        self.pushButton_8.setText(_translate("LoadWindow", "Browse"))
+        self.label_9.setText(_translate("LoadWindow", "GO Term Barplot"))
+        self.pushButton_9.setText(_translate("LoadWindow", "Browse"))
+        self.label_10.setText(_translate("LoadWindow", "Isoform Expression Table"))
+        self.pushButton_10.setText(_translate("LoadWindow", "Browse"))
+        self.label_11.setText(_translate("LoadWindow", "Isoform Heatmap"))
+        self.pushButton_11.setText(_translate("LoadWindow", "Browse"))
 
 if __name__ == "__main__":
     import sys
