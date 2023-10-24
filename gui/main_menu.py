@@ -10,9 +10,15 @@ import sys
 
 from gui.de_dialog import Ui_DE
 from gui.go_dialog import Ui_GO
+from gui.report_de import Ui_ReportDe
 
 
 class Ui_Group(object):
+    def openCreateReport(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_ReportDe()
+        self.ui.setupUi(self.window)
+        self.window.show()
     def openWindow(self):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_GO()
@@ -92,7 +98,6 @@ class Ui_Group(object):
         if fileName:
             if ".csv" in fileName:
                 df = pd.read_csv(fileName)
-                header = df.iloc[0]
                 df = df[1:]
                 self.tableView.setColumnCount(len(df.columns))
                 self.tableView.setRowCount(len(df.index))
@@ -112,7 +117,6 @@ class Ui_Group(object):
                 self.tableView.setColumnWidth(4, 100)
             else:
                 df = pd.read_table(fileName, sep='\t', lineterminator="\n")
-                header = df.iloc[0]
                 self.tableView.setColumnCount(len(df.columns))
                 self.tableView.setRowCount(len(df.index))
                 for i in range(len(df.index)):
@@ -146,7 +150,6 @@ class Ui_Group(object):
         if fileName:
             if ".csv" in fileName:
                 df = pd.read_csv(fileName)
-                header = df.iloc[0]
                 df = df[1:]
                 self.tableView2.setColumnCount(len(df.columns))
                 self.tableView2.setRowCount(len(df.index))
@@ -166,7 +169,6 @@ class Ui_Group(object):
                 self.tableView2.setColumnWidth(4, 100)
             else:
                 df = pd.read_table(fileName, sep='\t', lineterminator="\n")
-                header = df.iloc[0]
                 self.tableView2.setColumnCount(len(df.columns))
                 self.tableView2.setRowCount(len(df.index))
                 for i in range(len(df.index)):
@@ -374,6 +376,9 @@ class Ui_Group(object):
         self.actionGOgraphbar = QtGui.QAction(parent=Group)
         self.actionGOgraphbar.setObjectName("actionDePCA")
         self.actionGOgraphbar.triggered.connect(self.openBarplot)
+        self.actionDeReport = QtGui.QAction(parent=Group)
+        self.actionDeReport.setObjectName("actionDeReport")
+        self.actionDeReport.triggered.connect(self.openCreateReport)
         self.actionProject = QtGui.QAction(parent=Group)
         self.actionProject.setObjectName("actionProject")
         self.actionClose = QtGui.QAction(parent=Group)
@@ -407,6 +412,8 @@ class Ui_Group(object):
         self.menuPerform.addAction(self.actionDe)
         self.menuPerform.addAction(self.actionGo)
         self.menuDE.addAction(self.menuPerform.menuAction())
+        self.menuDE.addSeparator()
+        self.menuDE.addAction(self.actionDeReport)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuIsoform.menuAction())
         self.menubar.addAction(self.menuDE.menuAction())
@@ -439,6 +446,7 @@ class Ui_Group(object):
         self.actionDeVolcano.setText(_translate("MainWindow", "Differential Gene Expression Volcano"))
         self.actionGOgraphbar.setText(_translate("MainWindow", "GO Terms Barplot"))
         self.actionGOgraph.setText(_translate("MainWindow", "GO Terms Line Plot"))
+        self.actionDeReport.setText(_translate("MainWindow", "Create Report for DE Analysis"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.statistics), _translate("MainWindow", "Isoform"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.report), _translate("MainWindow", "Report"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.de), _translate("MainWindow", "Differential Gene Expression Table"))

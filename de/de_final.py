@@ -25,10 +25,11 @@ def readCounts(path):
         counts = counts.T
         return counts
 
-def createMetadata(counts, list):
+def createMetadata(counts, list, path):
     metadata = pd.DataFrame(zip(counts.index, list),
                             columns=['Sample', 'Condition'])
     metadata = metadata.set_index('Sample')
+    metadata.to_csv(path + '/tables/metadata.tsv', sep="\t", index=False)
     return metadata
 
 def performDe(counts, metadata):
@@ -85,7 +86,7 @@ def main(data, metadata, contrast1, contrast2, path):
     createDir(path + "/tables")
     print("Start DE")
     counts = readCounts(data)
-    metadata = createMetadata(counts, metadata)
+    metadata = createMetadata(counts, metadata, path)
     dds = performDe(counts, metadata)
     res = createResultTable(dds, contrast1,contrast2, path)
     sigs = identifySignificant(res, path)
