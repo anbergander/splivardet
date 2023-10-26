@@ -250,7 +250,7 @@ class Ui_ReportDe(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Report"))
         self.label.setText(_translate("MainWindow", "Report: DEG and Pathway Enrichment"))
         self.label_8.setText(_translate("MainWindow", "Experiment"))
         self.textEdit_3.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

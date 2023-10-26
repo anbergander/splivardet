@@ -136,7 +136,7 @@ class Ui_createManifest(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Create Manifest"))
         self.pushButton.setText(_translate("MainWindow", "Continue"))
         self.label_2.setText(_translate("MainWindow", "Group"))
         self.label.setText(_translate("MainWindow", "Number of Samples"))

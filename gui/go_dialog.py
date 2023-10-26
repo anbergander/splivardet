@@ -87,7 +87,7 @@ class Ui_GO(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "Start GO"))
         self.label.setText(_translate("Dialog", "GO Terms"))
         self.label_2.setText(_translate("Dialog", "DE Table"))
         self.label_3.setText(_translate("Dialog", "Output"))

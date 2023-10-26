@@ -116,7 +116,7 @@ class Ui_DE(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "Start DEG"))
         self.label.setText(_translate("Dialog", "Differential Gene Expression"))
         self.label_2.setText(_translate("Dialog", "Count Table"))
         self.pushButton.setText(_translate("Dialog", "Browse"))

@@ -386,7 +386,7 @@ class Ui_Report(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Report"))
         self.label_23.setText(_translate("MainWindow", "Report"))
         self.label_6.setText(_translate("MainWindow", "Experiment"))
         self.label.setText(_translate("MainWindow", "Reference Genome"))

@@ -3,6 +3,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 class Ui_CancelRun(object):
 
+
     def setupUi(self, CancelRun):
         self.window = self.window = QtWidgets.QMainWindow()
         CancelRun.setObjectName("ParameterFormReport")

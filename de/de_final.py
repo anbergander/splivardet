@@ -59,6 +59,7 @@ def identifySignificant(res, path):
     return sigs
 def performPCA(dds, path):
     sc.pp.normalize_total(dds)
+    print(sc.tl.pca(dds))
     sc.tl.pca(dds)
     sc.pl.pca(dds, color='Condition', size=250, color_map="magma", save="_normalized.svg")
     shutil.move("figures/pca_normalized.svg", path + "/figures/pca_normalized.svg")
@@ -67,7 +68,6 @@ def performPCA(dds, path):
 def heatmapDE(dds, sigs, path):
     dds.layers['log1p'] = np.log1p(dds.layers['normed_counts'])
     dds_sigs = dds[:, sigs.index]
-    print(dds_sigs.obs_names)
     grapher = pd.DataFrame(dds_sigs.layers['log1p'].T,
                            index=dds_sigs.var_names, columns=dds_sigs.obs_names)
     sns.clustermap(grapher, z_score=0, cmap='Blues')
@@ -92,5 +92,5 @@ def main(data, metadata, contrast1, contrast2, path):
     sigs = identifySignificant(res, path)
     performPCA(dds, path)
     heatmapDE(dds, sigs, path)
-    volcanoPlot(res, path)
+    #volcanoPlot(res, path)
     print("Finished DE")
