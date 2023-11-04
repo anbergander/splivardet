@@ -30,7 +30,7 @@ class Ui_Group(object):
         self.ui.setupUi(self.window)
         self.window.show()
     def getOutputPath(self):
-        file = open('quantifySpliceVariants.nf', 'r')
+        file = open('../quantifySpliceVariants.nf', 'r')
         final = file.readlines()
         final = final[-3].split("out = ")[1]
         final = final.split("\n")[0]

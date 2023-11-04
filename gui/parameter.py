@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import QFileDialog
 
 class Ui_Dialog(object):
     def writeConfig(self):
-        file = open('quantifySpliceVariants.nf', 'w')
+        file = open('../quantifySpliceVariants.nf', 'w')
         s = ["params { \n", "\n", "threads = " + str(self.spinBox.value()) + " \n", "desaltIndex = " + self.plainTextEdit.toPlainText()
              + "\n", "genomeFasta = " + self.plainTextEdit_8.toPlainText() + " \n", "annotationsGtf = " + self.plainTextEdit_5.toPlainText() + " \n",
              "indexDir = " + self.plainTextEdit_11.toPlainText() + " \n", "dirToFastqs = " + self.plainTextEdit_4.toPlainText() + " \n",

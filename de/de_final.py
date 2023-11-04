@@ -40,8 +40,12 @@ def performDe(counts, metadata):
 def createResultTable(dds, contrast1, contrast2, path):
     stat_res = DeseqStats(dds, n_cpus=8, contrast=('Condition', contrast1, contrast2))
     stat_res.summary()
+    stat_res.plot_MA(save_path=path + "/figures/ma_plot.svg")
     res = stat_res.results_df
     mapper = id_map(species='human')
+    res.to_csv(path + '/tables/result_table_ensembleIds.tsv', sep="\t", index=False)
+    sigs = res[(res.padj < 0.05) & (abs(res.log2FoldChange) > 0.5)]
+    sigs.to_csv(path + '/tables/significant_de_ensembleIds.tsv', sep='\t', index=False)
     res['Gene'] = res.index.map(mapper.mapper)
     res = res[res.baseMean >= 10]
     cols_res = res.columns.tolist()
@@ -59,7 +63,6 @@ def identifySignificant(res, path):
     return sigs
 def performPCA(dds, path):
     sc.pp.normalize_total(dds)
-    print(sc.tl.pca(dds))
     sc.tl.pca(dds)
     sc.pl.pca(dds, color='Condition', size=250, color_map="magma", save="_normalized.svg")
     shutil.move("figures/pca_normalized.svg", path + "/figures/pca_normalized.svg")
@@ -70,7 +73,7 @@ def heatmapDE(dds, sigs, path):
     dds_sigs = dds[:, sigs.index]
     grapher = pd.DataFrame(dds_sigs.layers['log1p'].T,
                            index=dds_sigs.var_names, columns=dds_sigs.obs_names)
-    sns.clustermap(grapher, z_score=0, cmap='Blues')
+    sns.clustermap(grapher, z_score=0, cmap='magma')
     plt.savefig(path + "/figures/heatmap_de.svg", format='svg')
 
 def volcanoPlot(res, path):
@@ -92,5 +95,5 @@ def main(data, metadata, contrast1, contrast2, path):
     sigs = identifySignificant(res, path)
     performPCA(dds, path)
     heatmapDE(dds, sigs, path)
-    #volcanoPlot(res, path)
+    volcanoPlot(res, path)
     print("Finished DE")

@@ -12,7 +12,7 @@ class Ui_createManifest(object):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self.window)
-        self.ui.plainTextEdit_6.setPlainText(path)
+        self.ui.plainTextEdit_6.setPlainText(path + ".tsv")
         self.window.show()
     def updateTable(self):
         self.spinBox.setDisabled(True)
