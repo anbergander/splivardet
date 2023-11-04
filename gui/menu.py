@@ -525,6 +525,7 @@ class Ui_Main(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("Group", "Main Menu"))
+        Group.setWindowTitle(_translate("Group", "Main Menu"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuOpen.setTitle(_translate("MainWindow", "Open"))
         self.menuIsoform.setTitle(_translate("MainWindow", "Isoform"))
@@ -533,26 +534,24 @@ class Ui_Main(object):
         self.actionCSV.setText(_translate("MainWindow", "Isoform Table"))
         self.actionReport.setText(_translate("MainWindow", "Report"))
         self.actionStatistics.setText(_translate("MainWindow", "Isoform Plots"))
-        self.actionDeTable.setText(_translate("MainWindow", "Differential Gene Expression Table"))
-        self.actionDeHeatmap.setText(_translate("MainWindow", "Differential Gene Expression Heatmap"))
+        self.actionDeTable.setText(_translate("MainWindow", "DEG Table"))
+        self.actionDeHeatmap.setText(_translate("MainWindow", "DEG Heatmap"))
         self.actionProject.setText(_translate("MainWindow", "Project"))
         self.actionClose.setText(_translate("MainWindow", "Close"))
-        self.actionDe.setText(_translate("MainWindow", "Differential Expression Analysis"))
-        self.actionGo.setText(_translate("MainWindow", "GO Terms"))
-        self.actionDePCA.setText(_translate("MainWindow", "Differential Gene Expression PCA"))
-        self.actionDeVolcano.setText(_translate("MainWindow", "Differential Gene Expression Volcano"))
-        self.actionGOgraphbar.setText(_translate("MainWindow", "GO Terms Barplot"))
-        self.actionGOgraph.setText(_translate("MainWindow", "GO Terms Line Plot"))
-        self.actionGOTable.setText(_translate("MainWindow", "GO Terms Table"))
-        self.actionDeReport.setText(_translate("MainWindow", "Create Report for DE Analysis"))
+        self.actionDe.setText(_translate("MainWindow", "DEG Analysis"))
+        self.actionGo.setText(_translate("MainWindow", "GSEA"))
+        self.actionDePCA.setText(_translate("MainWindow", "DEG PCA"))
+        self.actionDeVolcano.setText(_translate("MainWindow", "DEG Volcano or MA"))
+        self.actionGOgraphbar.setText(_translate("MainWindow", "GSEA Barplot"))
+        self.actionGOgraph.setText(_translate("MainWindow", "GSEA Line Plot"))
+        self.actionGOTable.setText(_translate("MainWindow", "GSEA Table"))
+        self.actionDeReport.setText(_translate("MainWindow", "Create Report for DEG Analysis"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.statistics), _translate("MainWindow", "Isoform"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.report), _translate("MainWindow", "Report"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.de),
-                                  _translate("MainWindow", "Differential Gene Expression Table"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.GeneExpression),
-                                  _translate("MainWindow", "Differential Gene Expression"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "GO Terms"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.goTable), _translate("MainWindow", "GO Terms Table"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.de), _translate("MainWindow", "DEG Table"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.GeneExpression), _translate("MainWindow", "DEG"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab),_translate("MainWindow", "GSEA"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.goTable), _translate("MainWindow", "GSEA Table"))
 
 
 if __name__ == "__main__":

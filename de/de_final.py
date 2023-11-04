@@ -43,9 +43,9 @@ def createResultTable(dds, contrast1, contrast2, path):
     stat_res.plot_MA(save_path=path + "/figures/ma_plot.svg")
     res = stat_res.results_df
     mapper = id_map(species='human')
-    res.to_csv(path + '/tables/result_table_ensembleIds.tsv', sep="\t", index=False)
+    res.to_csv(path + '/tables/result_table_ensembleIds.tsv', sep="\t", index=True)
     sigs = res[(res.padj < 0.05) & (abs(res.log2FoldChange) > 0.5)]
-    sigs.to_csv(path + '/tables/significant_de_ensembleIds.tsv', sep='\t', index=False)
+    sigs.to_csv(path + '/tables/significant_de_ensembleIds.tsv', sep='\t', index=True)
     res['Gene'] = res.index.map(mapper.mapper)
     res = res[res.baseMean >= 10]
     cols_res = res.columns.tolist()
@@ -73,7 +73,7 @@ def heatmapDE(dds, sigs, path):
     dds_sigs = dds[:, sigs.index]
     grapher = pd.DataFrame(dds_sigs.layers['log1p'].T,
                            index=dds_sigs.var_names, columns=dds_sigs.obs_names)
-    sns.clustermap(grapher, z_score=0, cmap='magma')
+    sns.clustermap(grapher, z_score=0, cmap='magma_r')
     plt.savefig(path + "/figures/heatmap_de.svg", format='svg')
 
 def volcanoPlot(res, path):

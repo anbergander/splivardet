@@ -1,7 +1,7 @@
 import os
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog, QMessageBox
 
 from de import go_final
 
@@ -23,11 +23,12 @@ class Ui_GO(object):
         print(fname)
     def performGO(self):
         go_final.main(self.textEdit_2.toPlainText(), self.textEdit.toPlainText())
+        QMessageBox.information(self.verticalLayoutWidget, "Done", "GSEA was performed")
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.setFixedSize(470, 225)
         self.label = QtWidgets.QLabel(parent=Dialog)
-        self.label.setGeometry(QtCore.QRect(200, 10, 100, 20))
+        self.label.setGeometry(QtCore.QRect(220, 10, 100, 20))
         self.label.setObjectName("label")
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -87,9 +88,9 @@ class Ui_GO(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Start GO"))
-        self.label.setText(_translate("Dialog", "GO Terms"))
-        self.label_2.setText(_translate("Dialog", "DE Table"))
+        Dialog.setWindowTitle(_translate("Dialog", "Start GSEA"))
+        self.label.setText(_translate("Dialog", "GSEA"))
+        self.label_2.setText(_translate("Dialog", "DEG Table"))
         self.label_3.setText(_translate("Dialog", "Output"))
         self.pushButton.setText(_translate("Dialog", "Browse"))
         self.pushButton_3.setText(_translate("Dialog", "Browse"))
