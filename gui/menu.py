@@ -543,7 +543,7 @@ class Ui_Main(object):
         self.actionDePCA.setText(_translate("MainWindow", "DEG PCA"))
         self.actionDeVolcano.setText(_translate("MainWindow", "DEG Volcano or MA"))
         self.actionGOgraphbar.setText(_translate("MainWindow", "GSEA Barplot"))
-        self.actionGOgraph.setText(_translate("MainWindow", "GSEA Line Plot"))
+        self.actionGOgraph.setText(_translate("MainWindow", "GSEA Enrichment Plot"))
         self.actionGOTable.setText(_translate("MainWindow", "GSEA Table"))
         self.actionDeReport.setText(_translate("MainWindow", "Create Report for DEG Analysis"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.statistics), _translate("MainWindow", "Isoform"))
