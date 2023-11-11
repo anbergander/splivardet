@@ -32,68 +32,108 @@ def createMetadata(counts, list, path):
     metadata.to_csv(path + '/tables/metadata.tsv', sep="\t", index=False)
     return metadata
 
-def performDe(counts, metadata):
-    dds = DeseqDataSet(counts=counts, metadata=metadata, design_factors='Condition')
+def readMetadataTable(path):
+    metadata = pd.read_table(path)
+    metadata = metadata.set_index('Sample')
+    print(metadata)
+    return metadata
+
+def performDe(counts, metadata, factors):
+    dds = DeseqDataSet(counts=counts, metadata=metadata, design_factors=factors)
     dds.deseq2()
     return dds
 
-def createResultTable(dds, contrast1, contrast2, path):
-    stat_res = DeseqStats(dds, n_cpus=8, contrast=('Condition', contrast1, contrast2))
+def createResultTable(dds, factor, contrast1, contrast2, path):
+    stat_res = DeseqStats(dds, n_cpus=8, contrast=(factor, contrast1, contrast2))
     stat_res.summary()
-    stat_res.plot_MA(save_path=path + "/figures/ma_plot.svg")
+    stat_res.plot_MA(save_path=path + "/figures/ma_plot_" + factor + "_" + contrast1 + "_" + contrast2 + ".svg")
     res = stat_res.results_df
     mapper = id_map(species='human')
-    res.to_csv(path + '/tables/result_table_ensembleIds.tsv', sep="\t", index=True)
+    res.to_csv(path + '/tables/result_table_ensembleIds' + "_" + factor + "_" + contrast1 + "_" + contrast2 + ".tsv", sep="\t", index=True)
     sigs = res[(res.padj < 0.05) & (abs(res.log2FoldChange) > 0.5)]
-    sigs.to_csv(path + '/tables/significant_de_ensembleIds.tsv', sep='\t', index=True)
+    sigs.to_csv(path + '/tables/significant_de_ensembleIds' + "_" + factor + "_" + contrast1 + "_" + contrast2 + ".tsv", sep='\t', index=True)
     res['Gene'] = res.index.map(mapper.mapper)
     res = res[res.baseMean >= 10]
     cols_res = res.columns.tolist()
     cols_res = cols_res[-1:] + cols_res[:-1]
     ordered_res = res[cols_res]
-    ordered_res.to_csv(path + '/tables/result_table.tsv', sep="\t", index=False)
+    ordered_res.to_csv(path + '/tables/result_table' + "_" + factor + "_" + contrast1 + "_" + contrast2 + ".tsv", sep="\t", index=False)
     return res
 
-def identifySignificant(res, path):
+def identifySignificant(res, path, factor, contrast1, contrast2):
     cols_res = res.columns.tolist()
     cols_res = cols_res[-1:] + cols_res[:-1]
-    sigs = res[(res.padj < 0.05) & (abs(res.log2FoldChange) > 0.5)]
-    ordered_sigs = sigs[cols_res]
-    ordered_sigs.to_csv(path + '/tables/significant_de.tsv', sep='\t', index=False)
-    return sigs
-def performPCA(dds, path):
+    significant = res[(res.padj < 0.05) & (abs(res.log2FoldChange) > 0.5)]
+    ordered_significant = significant[cols_res]
+    ordered_significant.to_csv(path + '/tables/significant_de' + "_" + factor + "_" + contrast1 + "_" + contrast2 + ".tsv", sep='\t', index=False)
+    return significant
+def performPCA(dds, path, factor):
     sc.pp.normalize_total(dds)
     sc.tl.pca(dds)
-    sc.pl.pca(dds, color='Condition', size=250, color_map="magma", save="_normalized.svg")
-    shutil.move("figures/pca_normalized.svg", path + "/figures/pca_normalized.svg")
-    os.rmdir("/home/ubuntu/splivardet/gui/figures")
+    sc.pl.pca(dds, color=factor, size=250, color_map="magma", save="_" +factor+ "_normalized.svg")
+    shutil.move("figures/pca_" +factor+"_normalized.svg", path + "/figures/pca_" +factor+"_normalized.svg")
+    #os.rmdir("/home/ubuntu/splivardet/gui/figures")
 
-def heatmapDE(dds, sigs, path):
+def heatmapDE(dds, sigs, path, factor, contrast1, contrast2):
     dds.layers['log1p'] = np.log1p(dds.layers['normed_counts'])
     dds_sigs = dds[:, sigs.index]
     grapher = pd.DataFrame(dds_sigs.layers['log1p'].T,
                            index=dds_sigs.var_names, columns=dds_sigs.obs_names)
-    sns.clustermap(grapher, z_score=0, cmap='magma_r')
-    plt.savefig(path + "/figures/heatmap_de.svg", format='svg')
+    sns.clustermap(grapher, z_score=0, cmap='magma_r', cbar_pos=(0.02, 0.83, 0.03, 0.15))
+    plt.savefig(path + "/figures/heatmap_de_"+ factor + "_"+contrast1 + "_"+ contrast2+".svg", format='svg')
 
-def volcanoPlot(res, path):
-    volcano(res, symbol='Gene', colors=['blue', 'lightgrey', 'purple'], save=path + "/figures/volcano", to_label=5, top_right_frame=True)
+def volcanoPlot(res, path, factor, contrast1, contrast2):
+    volcano(res, symbol='Gene', colors=['blue', 'lightgrey', 'purple'], save=path + "/figures/volcano_" + factor
+                                                                             + "_" + contrast1 + "_" + contrast2
+            , to_label=5, top_right_frame=True)
 
 def createDir(path):
     isExist = os.path.exists(path)
     if not isExist:
         os.makedirs(path)
         print("The new directory is created!")
-def main(data, metadata, contrast1, contrast2, path):
+def main(data, metadata, path, contrast1, contrast2, factors):
     createDir(path + "/figures")
     createDir(path + "/tables")
     print("Start DE")
     counts = readCounts(data)
+    print(counts)
     metadata = createMetadata(counts, metadata, path)
-    dds = performDe(counts, metadata)
-    res = createResultTable(dds, contrast1,contrast2, path)
-    sigs = identifySignificant(res, path)
-    performPCA(dds, path)
-    heatmapDE(dds, sigs, path)
-    volcanoPlot(res, path)
+    dds = performDe(counts, metadata, factors)
+    print(dds)
+    res = createResultTable(dds, contrast1,contrast2, factors,path)
+    significant = identifySignificant(res, path, factors, contrast1, contrast2)
+    performPCA(dds, path, factors)
+    heatmapDE(dds, significant, path, factors, contrast1, contrast2)
+    volcanoPlot(res, path,factors, contrast1, contrast2)
     print("Finished DE")
+
+def main2(data, metadatapath, path):
+    createDir(path + "/figures")
+    createDir(path + "/tables")
+    counts = readCounts(data)
+    metadata = readMetadataTable(metadatapath)
+    factors = []
+    for col in metadata:
+        factors.append(col)
+    dds = performDe(counts,metadata,factors)
+    collection = []
+    for col in metadata:
+        performPCA(dds, path, col)
+        for elem in metadata[col]:
+            collection.append(elem)
+        setList = set(collection)
+        conditions = list(setList)
+        for item in conditions:
+            for items in conditions:
+                if not items == item:
+                    print(col)
+                    fac1 = item
+                    print(fac1)
+                    fac2 = items
+                    print(fac2)
+                    res = createResultTable(dds, col, fac1, fac2, path)
+                    significant = identifySignificant(res, path, col, fac1, fac2)
+                    heatmapDE(dds, significant, path, col, fac1, fac2)
+                    volcanoPlot(res, path, col, fac1, fac2)
+        collection = []

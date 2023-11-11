@@ -8,7 +8,7 @@ from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QFileDialog, QTableWidgetItem, QAbstractItemView, QLineEdit
 import sys
 
-from gui.de_dialog import Ui_DE
+from gui.de_metadata import Ui_Metadata
 from gui.go_dialog import Ui_GO
 from gui.report_de import Ui_ReportDe
 
@@ -26,7 +26,7 @@ class Ui_Group(object):
         self.window.show()
     def openWindowDe(self):
         self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_DE()
+        self.ui = Ui_Metadata()
         self.ui.setupUi(self.window)
         self.window.show()
     def getOutputPath(self):
