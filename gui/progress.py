@@ -1,21 +1,20 @@
 import subprocess
-import time
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtCore import QProcess
+from PyQt6.QtWidgets import QMessageBox
 
 from cancel_run import Ui_CancelRun
+from gui.report import Ui_Report
 
 
 class Ui_Progress(object):
     def runProcess(self):
-        self.label.setText("Currently Running: Trimming")
+        self.pushButton_2.hide()
         self.call()
-        self.label.setText("Currently Running: Alignment")
         self.call2()
-        self.label.setText("Currently Running: Isoform Detection")
-        cmd = "nextflow run splivarquant"
-        subprocess.call(cmd, shell=True)
+        self.call3()
+        self.pushButton.show()
+        QMessageBox.information(self.window, "Done", "Isoform Detection was performed")
     def call(self):
         cmd = "nextflow run porechop"
         subprocess.call(cmd, shell=True)
@@ -23,9 +22,19 @@ class Ui_Progress(object):
         cmd = "nextflow run splivardet"
         subprocess.call(cmd, shell=True)
 
+    def call3(self):
+        cmd = "nextflow run splivarquant"
+        subprocess.call(cmd, shell=True)
+
     def openWindow(self):
         self.window = QtWidgets.QDialog()
         self.ui = Ui_CancelRun()
+        self.ui.setupUi(self.window)
+        self.window.show()
+
+    def openReport(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_Report()
         self.ui.setupUi(self.window)
         self.window.show()
 
@@ -46,25 +55,32 @@ class Ui_Progress(object):
         self.label.setObjectName("label")
 
         self.pushButton = QtWidgets.QPushButton(parent=Progress)
-        self.pushButton.clicked.connect(self.openWindow)
+        self.pushButton.clicked.connect(self.openReport)
+        self.pushButton.clicked.connect(Progress.close)
         self.pushButton.setGeometry(QtCore.QRect(370, 80, 121, 41))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("cancel-vector-icon.jpg"), QtGui.QIcon.Mode.Normal,
+        icon.addPixmap(QtGui.QPixmap("next-step-28.png"), QtGui.QIcon.Mode.Normal,
                        QtGui.QIcon.State.Off)
         font.setPointSize(10)
         self.pushButton.setFont(font)
         self.pushButton.setIcon(icon)
         self.pushButton.setObjectName("pushButton")
+        self.pushButton.hide()
+        self.pushButton_2 = QtWidgets.QPushButton(parent=Progress)
+        self.pushButton_2.clicked.connect(self.pushButton_2.hide)
+        self.pushButton_2.clicked.connect(self.runProcess)
+        self.pushButton_2.setGeometry(QtCore.QRect(15, 80, 121, 41))
+        self.pushButton_2.setFont(font)
 
         self.retranslateUi(Progress)
         QtCore.QMetaObject.connectSlotsByName(Progress)
-        self.runProcess()
 
     def retranslateUi(self, Progress):
         _translate = QtCore.QCoreApplication.translate
         self.label.setText(_translate("runDialog", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">Currently running...</span></p></body></html>"))
         Progress.setWindowTitle(_translate("Progress", "Progress"))
-        self.pushButton.setText(_translate("Progress", "Cancel"))
+        self.pushButton.setText(_translate("Progress", "Continue"))
+        self.pushButton_2.setText(_translate("Progress", "Start"))
 
 
 if __name__ == "__main__":

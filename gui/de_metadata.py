@@ -61,7 +61,7 @@ class Ui_Metadata(object):
         count = self.textEdit.toPlainText()
         metadata = self.textEdit_2.toPlainText() + '/metadata.tsv'
         main2(count, metadata, self.textEdit_2.toPlainText())
-        QMessageBox.information(self.centralwidget, "Done", "DE was performed")
+        QMessageBox.information(self.centralwidget, "Done", "DEG was performed")
     def createMetadataTable(self):
         self.tableWidget.show()
         factors = self.textEdit_3.toPlainText()
@@ -187,7 +187,7 @@ class Ui_Metadata(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "Continue"))
+        self.pushButton.setText(_translate("MainWindow", "Start"))
         self.label_2.setText(_translate("MainWindow", "Count Table"))
         self.textEdit.setPlaceholderText(_translate("MainWindow", "Count Data"))
         self.pushButton_2.setText(_translate("MainWindow", "Browse"))
