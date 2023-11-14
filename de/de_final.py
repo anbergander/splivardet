@@ -49,11 +49,12 @@ def createResultTable(dds, factor, contrast1, contrast2, path):
     stat_res.plot_MA(save_path=path + "/figures/ma_plot_" + factor + "_" + contrast1 + "_" + contrast2 + ".svg")
     res = stat_res.results_df
     mapper = id_map(species='human')
-    res.to_csv(path + '/tables/result_table_ensembleIds' + "_" + factor + "_" + contrast1 + "_" + contrast2 + ".tsv", sep="\t", index=True)
-    sigs = res[(res.padj < 0.05) & (abs(res.log2FoldChange) > 0.5)]
-    sigs.to_csv(path + '/tables/significant_de_ensembleIds' + "_" + factor + "_" + contrast1 + "_" + contrast2 + ".tsv", sep='\t', index=True)
     res['Gene'] = res.index.map(mapper.mapper)
     res = res[res.baseMean >= 10]
+    res.to_csv(path + '/tables/result_table_ensembleIds' + "_" + factor + "_" + contrast1 + "_" + contrast2 + ".tsv", sep="\t", index=True)
+    sigs = res[(res.padj < 0.05) & (abs(res.log2FoldChange) > 0.5)]
+    sigs.to_csv(path + '/tables/significant_de_ensembleIds' + "_" + factor + "_" + contrast1 + "_" + contrast2 + ".tsv",
+                sep='\t', index=True)
     cols_res = res.columns.tolist()
     cols_res = cols_res[-1:] + cols_res[:-1]
     ordered_res = res[cols_res]
