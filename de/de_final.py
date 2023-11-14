@@ -82,17 +82,17 @@ def heatmapDE(dds, sigs, path, factor, contrast1, contrast2):
     sns.clustermap(grapher, z_score=0, cmap='magma_r', cbar_pos=(0.02, 0.83, 0.03, 0.15))
     plt.savefig(path + "/figures/heatmap_de_"+ factor + "_"+contrast1 + "_"+ contrast2+".svg", format='svg')
 
-def volcanoPlot(res, path, factor, contrast1, contrast2):
+def volcanoPlot(res, path, genes, factor, contrast1, contrast2):
     volcano(res, symbol='Gene', colors=['blue', 'lightgrey', 'purple'], save=path + "/figures/volcano_" + factor
                                                                              + "_" + contrast1 + "_" + contrast2
-            , to_label=5, top_right_frame=True)
+            , to_label=genes, top_right_frame=True)
 
 def createDir(path):
     isExist = os.path.exists(path)
     if not isExist:
         os.makedirs(path)
         print("The new directory is created!")
-def main(data, metadata, path, contrast1, contrast2, factors):
+def main(data, metadata, path, contrast1, contrast2, factors, genes):
     createDir(path + "/figures")
     createDir(path + "/tables")
     print("Start DE")
@@ -105,10 +105,10 @@ def main(data, metadata, path, contrast1, contrast2, factors):
     significant = identifySignificant(res, path, factors, contrast1, contrast2)
     performPCA(dds, path, factors)
     heatmapDE(dds, significant, path, factors, contrast1, contrast2)
-    volcanoPlot(res, path,factors, contrast1, contrast2)
+    volcanoPlot(res, path, genes, factors, contrast1, contrast2)
     print("Finished DE")
 
-def main2(data, metadatapath, path):
+def main2(data, metadatapath, path, genes):
     createDir(path + "/figures")
     createDir(path + "/tables")
     counts = readCounts(data)
@@ -118,6 +118,9 @@ def main2(data, metadatapath, path):
         factors.append(col)
     dds = performDe(counts,metadata,factors)
     collection = []
+    f = open(path + "/summary.txt", "w")
+    f.writelines("Summary for DEG")
+    f.write("\n")
     for col in metadata:
         performPCA(dds, path, col)
         for elem in metadata[col]:
@@ -134,6 +137,15 @@ def main2(data, metadatapath, path):
                     print(fac2)
                     res = createResultTable(dds, col, fac1, fac2, path)
                     significant = identifySignificant(res, path, col, fac1, fac2)
-                    heatmapDE(dds, significant, path, col, fac1, fac2)
-                    volcanoPlot(res, path, col, fac1, fac2)
+                    if significant.empty:
+                        f.writelines(
+                            "No differentially expressed genes have been identified for " + col + " with conditions: " + fac1 + " and " + fac2)
+                        f.write("\n")
+                    else:
+                        heatmapDE(dds, significant, path, col, fac1, fac2)
+                        volcanoPlot(res, path, genes, col, fac1, fac2)
+                        f.writelines(
+                            "All files generated for " + col + " with conditions: " + fac1 + " and " + fac2)
+                        f.write("\n")
         collection = []
+    f.close()

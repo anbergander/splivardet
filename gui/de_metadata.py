@@ -58,10 +58,22 @@ class Ui_Metadata(object):
         self.pushButton_2.setDisabled(True)
         self.pushButton_3.setDisabled(True)
         self.savetable()
+        genes = self.identifyGenesOfInterest()
         count = self.textEdit.toPlainText()
         metadata = self.textEdit_2.toPlainText() + '/metadata.tsv'
-        main2(count, metadata, self.textEdit_2.toPlainText())
+        main2(count, metadata, self.textEdit_2.toPlainText(), genes)
         QMessageBox.information(self.centralwidget, "Done", "DEG was performed")
+
+    def identifyGenesOfInterest(self):
+        if not self.textEdit_4.toPlainText() == "":
+            genes = self.textEdit_4.toPlainText()
+            list = genes.split(",")
+            list = [x.upper() for x in list]
+            print(list)
+            return list
+        else:
+            return 5
+
     def createMetadataTable(self):
         self.tableWidget.show()
         factors = self.textEdit_3.toPlainText()
@@ -81,7 +93,7 @@ class Ui_Metadata(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.setFixedSize(816, 625)
+        MainWindow.setFixedSize(816, 610)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton = QtWidgets.QPushButton(parent=self.centralwidget)
@@ -99,7 +111,7 @@ class Ui_Metadata(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label_2 = QtWidgets.QLabel(parent=self.verticalLayoutWidget_2)
         self.label_2.setObjectName("label_2")
-        self.label_2.setMinimumWidth(100)
+        self.label_2.setMinimumWidth(120)
         self.horizontalLayout.addWidget(self.label_2)
         self.textEdit = QtWidgets.QTextEdit(parent=self.verticalLayoutWidget_2)
         self.textEdit.setObjectName("textBrowser")
@@ -116,7 +128,7 @@ class Ui_Metadata(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.label = QtWidgets.QLabel(parent=self.verticalLayoutWidget_2)
         self.label.setObjectName("label")
-        self.label.setMinimumWidth(100)
+        self.label.setMinimumWidth(120)
         self.horizontalLayout_2.addWidget(self.label)
         self.textEdit_2 = QtWidgets.QTextEdit(parent=self.verticalLayoutWidget_2)
         self.textEdit_2.setObjectName("textBrowser_2")
@@ -131,11 +143,22 @@ class Ui_Metadata(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName("horizontalLayout_3")
+        self.label_6 = QtWidgets.QLabel(parent=self.verticalLayoutWidget_2)
+        self.label_6.setObjectName("label_3")
+        self.label_6.setMinimumWidth(120)
+        self.horizontalLayout_5.addWidget(self.label_6)
+        self.textEdit_4 = QtWidgets.QTextEdit(parent=self.verticalLayoutWidget_2)
+        self.textEdit_4.setObjectName("lineEdit")
+        self.textEdit_4.setMaximumHeight(50)
+        self.horizontalLayout_5.addWidget(self.textEdit_4)
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_3 = QtWidgets.QLabel(parent=self.verticalLayoutWidget_2)
         self.label_3.setObjectName("label_3")
-        self.label_3.setMinimumWidth(100)
+        self.label_3.setMinimumWidth(120)
         self.horizontalLayout_3.addWidget(self.label_3)
         self.textEdit_3 = QtWidgets.QTextEdit(parent=self.verticalLayoutWidget_2)
         self.textEdit_3.setObjectName("lineEdit")
@@ -199,6 +222,8 @@ class Ui_Metadata(object):
         self.label_4.setText(_translate("MainWindow", "Number of Samples"))
         self.pushButton_4.setText(_translate("MainWindow", "Generate Metadata Table"))
         self.label_5.setText(_translate("MainWindow", "Differential Gene Expression Analysis"))
+        self.label_6.setText(_translate("MainWindow", "Genes of Interest"))
+        self.textEdit_4.setPlaceholderText(_translate("MainWindow", "Optional: List of Genes of Interest"))
 
 if __name__ == "__main__":
 
