@@ -218,7 +218,7 @@ class Ui_Metadata(object):
         self.textEdit_2.setPlaceholderText(_translate("MainWindow", "Output Path"))
         self.pushButton_3.setText(_translate("MainWindow", "Browse"))
         self.label_3.setText(_translate("MainWindow", "Factors"))
-        self.textEdit_3.setPlaceholderText(_translate("MainWindow", "Factors for multivariate DEG"))
+        self.textEdit_3.setPlaceholderText(_translate("MainWindow", "Factors for multivariate DGE"))
         self.label_4.setText(_translate("MainWindow", "Number of Samples"))
         self.pushButton_4.setText(_translate("MainWindow", "Generate Metadata Table"))
         self.label_5.setText(_translate("MainWindow", "Differential Gene Expression Analysis"))
