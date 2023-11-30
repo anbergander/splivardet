@@ -18,18 +18,16 @@ publishDir "$params.out",mode:"move"
 
 input:
 	path quantfile
-output:
-	path "*.pdf"
-	path "${b}.candidates.txt"
+
 script:
 
 b = quantfile.getSimpleName()
 
 """
-python3 $workflow.projectDir/preprocess_stat.py $quantfile ${params.out}read_counts.csv
-python3 $workflow.projectDir/reformat_swan_in.py ${params.out}${b}.isoforms.gtf ${params.out}${b}.candidates.txt
-python3 $workflow.projectDir/isoform_report.py ${params.out}$b
-rm *pickle
+python3 $workflow.projectDir/preprocess_stat.py ${params.out}${b}.isoforms.gtf ${params.out}read_counts.csv $quantfile $projectDir
+python3 $workflow.projectDir/reformat_swan_in.py ${params.out}${b}.isoforms.gtf $projectDir ${params.indexDir} ${params.out}${b}.candidates.txt
+python3 $workflow.projectDir/isoform_report.py ${params.out}$b ${params.indexDir} ${params.flairManifest}
+mv candidates.txt ${params.out}$b/
 
 """
 

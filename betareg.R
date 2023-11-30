@@ -19,7 +19,7 @@ for (key in keys) {
   #print(key)
   ex_df = read.csv(paste0(getwd(),"/",key,".csv"))
   
-  if(sum(ex_df$value)/nrow(ex_df)!=1){
+  if(sd(ex_df$transf_value)>0){
 	
     model.beta <- try(betareg(transf_value ~ group, data=ex_df), silent=TRUE)
      if(class(model.beta)=="try-error") { 

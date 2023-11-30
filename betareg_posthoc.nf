@@ -25,24 +25,28 @@ process cleanup{
 
 process runStatandPlot{
 
+
 publishDir "$params.out",mode:"move"
+
 
 input:
 	path quantfile
 output:
-	path "*.pdf"
 	path "${b}.candidates.txt"
 script:
 
 b = quantfile.getSimpleName()
 
 """
-python3 $workflow.projectDir/preprocess_stat.py $quantfile ${params.out}read_counts.csv
+python3 $workflow.projectDir/preprocess_stat.py ${params.out}${b}.isoforms.gtf ${params.out}read_counts.csv $quantfile $projectDir
 Rscript $workflow.projectDir/betareg.R
-python3 $workflow.projectDir/fdr_correction.py
-python3 $workflow.projectDir/generate_plots.py
-mv candidates.txt ${b}.candidates.txt
-rm *pickle
+python3 $workflow.projectDir/fdr_correction.py $projectDir
+mkdir -p ${params.out}${b}
+mv posthoc_result.tsv ${params.out}${b}/${b}.posthoc_result.tsv
+python3 $workflow.projectDir/generate_plots.py $projectDir
+mv *violin.pdf ${params.out}${b}/
+mv candidates.txt ${b}.candidates.txt 
+
 
 """
 
