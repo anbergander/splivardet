@@ -10,39 +10,50 @@ import csv
 import pandas as pd
 from gtfparse import read_gtf
 import sys
-#isofile = sys.argv[1]
-isofile = '/vol/fastq/hg38/barcode02.isoforms.gtf'
+
+import warnings
+warnings.filterwarnings("ignore")
+
+
+isofile = sys.argv[1]
+#isofile = '/vol/fastq/bc2/barcode02.isoforms.gtf'
+
+pjd = sys.argv[2]+'/'
+indp = sys.argv[3]
+cand_f = sys.argv[4]
+
+ 
+#pjd='/vol/fastq/splivardet/' 
+#indp='/vol/fastq/index/'
+#cand_f='/vol/fastq/bc2/barcode02.candidates.txt'
 
 gtf = pd.read_csv(isofile, sep= "\t")
 gtfp = read_gtf(isofile)
-ens_annot = pd.read_csv("/vol/fastq/index/hg38.knownGene.gtf", sep= "\t", header=None)
+ens_annot = pd.read_csv(indp+"hg38.knownGene.gtf", sep= "\t", header=None)
 
 gl = list(gtfp['gene_id'])
 
 uniprot = [ p for p in gl if not(p.startswith("chr") or p.startswith("ENST"))]
-with open('/vol/fastq/testswan/all_genes.txt', 'w+') as fp:
+with open(pjd+'resources/all_genes.txt', 'w+') as fp:
     fp.write('\n'.join(list(set(uniprot))))
 
 
-uniprot = pd.read_csv("/vol/fastq/testswan/uniprot.tsv", sep= "\t")
+uniprot = pd.read_csv(pjd+"resources/uniprot.tsv", sep= "\t")
 
 up = dict(zip(uniprot['Entry'],uniprot['Gene Names']))
 
-file = open("/vol/fastq/testswan/refseq_ensembl.txt")
+file = open(pjd+"resources/refseq_ensembl.txt")
 annot = file.read()
 file.close()
 
-file = open("/vol/fastq/testswan/transcript_to_gene.txt")
+file = open(pjd+"resources/transcript_to_gene.txt")
 trans_to_gene = file.read()
 file.close()
 
-file = open("/vol/fastq/testswan/ens_gensym.txt")
+file = open(pjd+"resources/ens_gensym.txt")
 ens_gensym = file.read()
 file.close()
 
-file = open('/vol/fastq/hg38/barcode02.candidates.txt',mode='r')
-cand = file.read()
-file.close()
 
 counts = pd.read_csv("norm_counts.tsv", sep = "\t")
 
@@ -202,66 +213,27 @@ transcripts = counts['transcript']
 ens_trans = []
 for t in transcripts:
     n = t.split('_')
-    name = t.split('_')[-1]
-    split_trans = t.split('_')
-    if t.startswith('N') or t.startswith('X'):
-
-        t = '_'.join(t.split('_')[0:2])
-        t = t.split('-')[0]
-
-        gname = name
-        try:
-            gid = e_s[gname]
-        except:
-            gid = gname
-        try:
-            s = a_d[t]
-        except:
-            s = t
-    if t.startswith('ENST'):
-        s = t.split('.')[0]
-        try:
-            gid = t_g[s]
-        except:
-            gid = 'Not in database'
-        gensym = t.split('_')[-1]
-        try:
-            if not gensym.startswith('ENS'):
-                gname = up[gensym].split(' ')[0]
-            else:
-                gname = s_e[t_g[gensym]]
-        except:
-            gname = 'Not in database'
+    gid = t.split('_')[-1]
+    tr = n[0]
+    if tr.startswith('ENST'):
+        s = tr
             
     else:
 
-        t = t.split('_')[0]
-        unk_t = t
+        tr = t.split('_')[0]
 
-        t = '0x'+t.replace('-','').upper()
-        sq = 'FLAIR'+str(int(t, 16))
-        try:
-            s = flair[unk_t]
-        except:
-            print(n)
+        tr = '0x'+tr.replace('-','').upper()
+        sq = 'FLAIR'+str(int(tr, 16))
+        s = sq
         
 
-        if name.startswith('chr'):
-            gid = name.replace(':', '.')
-            gname = name
-        else:
-            gname = name
-            try:
-                gid = e_s[gname]
-            except:
-                gid = 'Not in database'
-
-    if s.startswith('ENS'):
+    if tr.startswith('ENS'):
         transcript_novelty = 'Known'
     else:
         transcript_novelty = 'None'
     if gid.startswith('ENSG'):
-        gene_novelty = 'Known'
+        gene_novelty = 'Known'#
+        gname = s_e[gid]
     else:
         gene_novelty = 'None'
     
@@ -298,12 +270,10 @@ counts = pd.concat([talon_header, counts], axis=1)
 counts = counts.drop('transcript', axis = 1)
 counts = counts.dropna()
 counts = counts[counts['annot_gene_id'].str.startswith('ENSG')]
-counts = counts[~counts['annot_transcript_id'].str.startswith('X')]
-counts = counts[~counts['annot_transcript_id'].str.startswith('NR')]
+
+
 counts.to_csv("abundance.tsv", sep='\t', header=True, index=False, quoting=csv.QUOTE_NONE)
 
-
-c_t = counts.filter(items=annot_transcript_id)
 
 ens_attr = ens_annot[8]
 attr_list = []
@@ -343,7 +313,7 @@ for i in ens_attr:
     attr_list.append(attribute)
 ens_annot[8] = attr_list
 ens_annot = ens_annot[~ens_annot[8].str.contains('Not in database')]
-ens_annot.to_csv("/vol/fastq/index/swan_annot.gtf", sep='\t', header=False, index=False, quoting=csv.QUOTE_NONE)
+ens_annot.to_csv("swan_annot.gtf", sep='\t', header=False, index=False, quoting=csv.QUOTE_NONE)
 
     #up_id = gte[0].split('gene_name "')[1][:-1]
     #if not up_id.startswith('chr'):
@@ -354,3 +324,22 @@ ens_annot.to_csv("/vol/fastq/index/swan_annot.gtf", sep='\t', header=False, inde
     #gene_name = ' gene_name "'+ gene +'"'
     #attribute = ';'.join([gene_id, t, gene_name, gte[2]])
     #attr_list.append(attribute)
+cand_file = open(cand_f)
+cand = cand_file.read()
+cand_file.close()
+
+cands = cand.split('\n')
+
+t_g['ENST00000664891'] = 'ENSG00000160808'
+hr_cand = []
+for c in cands:
+    c = c.split('_')[-1]
+    if c.startswith('ENS'):
+        c = c.split('.')[0]
+        hr_cand.append(s_e[c])
+
+            
+            
+with open('candidates.txt', 'w') as f:
+    for line in list(set(hr_cand)):
+        f.write(f"{line}\n")

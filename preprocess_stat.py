@@ -6,9 +6,67 @@ import csv
 import collections
 from operator import add
 import pickle
+from gtfparse import read_gtf
+from itertools import compress
 
 import warnings
 warnings.filterwarnings('ignore')
+
+
+isofile = sys.argv[1]
+wo = sys.argv[4]+'/'
+
+#wo = '/vol/fastq/splivardet/'
+#isofile = '/vol/fastq/hg38/barcode02.isoforms.gtf'
+
+gtfp = read_gtf(isofile)
+
+gl = list(gtfp['gene_id'])
+
+uniprot = [ p for p in gl if not(p.startswith("chr") or p.startswith("ENST"))]
+with open(wo+'resources/all_genes.txt', 'w+') as fp:
+    fp.write('\n'.join(list(set(uniprot))))
+
+
+uniprot = pd.read_csv(wo+"resources/uniprot.tsv", sep= "\t")
+
+up = dict(zip(uniprot['Entry'],uniprot['Gene Names']))
+
+file = open(wo+"resources/refseq_ensembl.txt")
+annot = file.read()
+file.close()
+
+file = open(wo+"resources/transcript_to_gene.txt")
+trans_to_gene = file.read()
+file.close()
+
+file = open(wo+"resources/ens_gensym.txt")
+ens_gensym = file.read()
+file.close()
+
+
+
+
+a_d = {}
+for n in annot.split("\n"):
+    s = n.split("\t")
+    if len(s)==2:
+        a_d[s[1]] = s[0]
+    
+t_g = {}
+for n in trans_to_gene.split("\n"):
+    s = n.split("\t")
+    if len(s)==2:
+        t_g[s[0]] = s[1]
+
+e_s = {}
+s_e = {}
+for n in ens_gensym.split("\n"):
+    s = n.split("\t")
+    if len(s)==2:
+        e_s[s[1]] = s[0]
+        s_e[s[0]] = s[1]
+
 
 def create_df_from_dict_entry(count_dict, grouplist, key):
     temp_dict = collections.defaultdict(list)
@@ -34,10 +92,13 @@ def norm_by_exp(n, d):
 
     return 100*n/d if d else 0
 
-def transform_z_o(pl, gl):
+def transform_z_o(l, gl):
+
+    x = float(l)
+    x = 1 if x > 1 else x
     n = len(gl)
-    return list(map(lambda x: (x*(n-1)+0.5)/n, pl))
-    return pl.apply(lambda x: (x*(n-1)+0.5)/n)
+    return (x*(n-1)+0.5)/n
+
     
 
 def identGroup(a):
@@ -66,13 +127,31 @@ def read_tsv_as_dict(path):
     counts["barcodes"] = list(map(identBarcode, identifier_verbose))
     return counts
 
-file = '/vol/fastq/hg38/barcode02.quantify.counts.tsv'
-read_count_file = '/vol/fastq/hg38/read_counts.csv'
+def gene_name(gene):
 
+    try:
+        
+        if gene.startswith('ENST'):
+            gn = t_g[gene.split('.')[0]]
+        elif ':' in gene:
+            gn = gene
+        else:
+            gn = e_s[str(up[gene]).split(' ')[0]]
+    except: 
+        gn = 'nan'
+
+    return gn
+
+
+file = sys.argv[3]
+read_count_file = sys.argv[2]
+
+#file='/vol/fastq/hg38/barcode02.quantify.counts.tsv'
+#read_count_file = '/vol/fastq/hg38/read_counts.csv'
 
 read_count_dict = read_file_as_dict(read_count_file, ",")
 read_df = pd.DataFrame.from_dict(read_count_dict)
-#print(read_df)
+
    
 counts = read_tsv_as_dict(file)
 raw_counts = dict(counts)
@@ -90,83 +169,161 @@ for key in counts:
         new_values.append(norm_count)
     counts[key] = new_values
     new_values = []
-
-
-
-barcode_index= [int(x.split("barcode")[1])for x in counts["barcodes"]]
-#res = dict(map(lambda i,j : (i,j) , barcode_index, counts["barcodes"]))
 barcode_names = counts["barcodes"]
+grouplist = set(counts["ids"])
+ids = counts["ids"]
+
+gr_bc_v = []
+for i in ids:
+    gr_bc_v.append(ids.count(i))
+
+bc_counts = dict(zip(barcode_names, gr_bc_v))
+
 counts.pop("barcodes")
-#sample_group = list(map(identGroup, df.index[1:]))
+counts.pop("ids")
+
+count_df = pd.DataFrame.from_dict(counts, orient = 'index')
+count_df.columns = barcode_names
+
+count_df = count_df.reset_index()
+count_df = count_df.rename(columns={"index": "transcript"})
+
+known = count_df[count_df.transcript.str.contains('ENST')]
+unknown = count_df[~count_df.transcript.str.contains('ENST')]
+unknown = unknown[~unknown.transcript.str.contains('chr')]
+
+a = known.transcript.str.split('_')
+x = [i[0] for i in a]
+y = [i[-1] for i in a]
+f1 = [i.startswith('ENST') for i in x]
+f2 = [i.startswith('ENST') for i in y]
+
+known['ENST'] = x
+known['ui'] = y
+
+
+temp_1 = known[known.ui.str.startswith('ENST')]
+
+ENST = temp_1.ui.tolist()
+ENST = [i.split('.')[0]for i in ENST]
+temp_1['ENST'] = ENST
+
+temp_2 = known[~known.ui.str.startswith('ENST')]
+
+ENST = temp_2.ENST.tolist()
+ENST = [i.split('.')[0]for i in ENST]
+temp_2['ENST'] = ENST
+
+temp = pd.concat([temp_1, temp_2])
+temp.drop(columns = 'ui', inplace = True)
+ENST = temp.ENST.tolist()
+ENSG = [t_g[i] if i in t_g else np.nan for i in ENST]
+temp['ENSG'] = ENSG
+temp.dropna(inplace=True)
+temp['transcript'] = temp.ENST + '_' + temp.ENSG
+
+known = temp
+
+transc = unknown.transcript.tolist()
+FLAIR = [i.split('_')[0]for i in transc]
+ui = [i.split('_')[-1]for i in transc]
+sym = [up[i] if i in up else np.nan for i in ui]
+sym = [i.split(' ')[0] if type(i) != float else np.nan for i in sym]
+ENSG = [e_s[i] if i in e_s else np.nan for i in sym]
+
+unknown['ENSG'] = ENSG
+unknown['ENST'] = FLAIR
+unknown['transcript'] = unknown.ENST + '_' + unknown.ENSG
+unknown.dropna(inplace=True)
+
+
+count_df = pd.concat([known, unknown])
+
+agg = dict.fromkeys(count_df.columns.difference(['ENST']), 'sum')
+agg['ENSG'] = 'first'
+agg['transcript'] = 'first'
+
+aggr_count_df = count_df.groupby('ENST').agg(agg)
+
+count_df.drop(columns=['ENST'], inplace = True)
+aggr_count_df.reset_index(inplace=True)
+
+temp = aggr_count_df.drop(columns=['transcript', 'ENST'])
+
+groups = temp.groupby('ENSG')
+
+agg = dict.fromkeys(temp.columns.difference(['ENSG']), 'sum')
+
+
+norm_df = groups.agg(agg)
+
+
+div_df = pd.DataFrame()
+
+for e in aggr_count_df.ENSG.tolist():
+
+    div_df = div_df.append(norm_df.loc[e], ignore_index=True)
+
+aggr_count_df[aggr_count_df.columns[2:-1]] = aggr_count_df[aggr_count_df.columns[2:-1]]/div_df
+aggr_count_df.fillna(0,inplace=True)
+aggr_count_df[aggr_count_df.columns[2:-1]] = aggr_count_df[aggr_count_df.columns[2:-1]].applymap(transform_z_o, gl=ids).round(decimals=5)
+
+aggr_count_df.set_index('transcript', inplace=True)
+aggr_count_df.drop(columns=['ENSG','ENST'], inplace=True)
+
+aggr_count_df.to_csv('norm_counts.tsv',sep = '\t', index = True)
+
+count_df = aggr_count_df
+
+tight = count_df.to_dict('tight')
+
+counts = dict(zip(tight['index'], tight['data']))
+counts['barcodes'] = barcode_names
+counts['ids'] = ids
+
+barcode_index= [int(x.split("barcode")[1])for x in barcode_names]
 
 dataframes = {}
-dataframes_raw = {}
+
 dataframes_melt = {}
-dataframes_melt_raw = {}
+
 max_length = collections.Counter(counts["ids"]).most_common()[0][1]
-anova_table_dict = collections.defaultdict(list)
-p_value_list = []
-gene_count_list = collections.defaultdict(list)
 
+counts.pop('barcodes')
 
 for key in counts.keys():
-    if gene_count_list[key.split("_")[-1]] == []:
-        gene_count_list[key.split("_")[-1]] = counts[key] 
-        
-    else:
-        gene_count_list[key.split("_")[-1]] = list(map(add, gene_count_list[key.split("_")[-1]], counts[key]))
 
-grouplist = set(counts["ids"])
-
-gene_exp_df = pd.DataFrame.from_dict(gene_count_list, orient='index')
-gene_exp_df.columns = barcode_names
-
-for key in counts.keys():
-    
-    
-    if key != "ids":
-        counts[key] = list(map(norm_by_exp, counts[key], gene_count_list[key.split("_")[-1]]))
-
-    
     
     group_list = set(counts["ids"])
     
     temp_df, temp_df_melt = create_df_from_dict_entry(counts, grouplist, key)
-    temp_df_raw, temp_df_melt_raw = create_df_from_dict_entry(raw_counts, grouplist, key)
-
+   
     if key != "ids":
  
         dataframes_melt[key] = temp_df_melt
         dataframes[key] = temp_df
-        dataframes_melt_raw[key] = temp_df_melt_raw
-        dataframes_raw[key] = temp_df_raw
+
         temp_df = dataframes_melt[key].dropna()
         join_df = False
         for group in grouplist:
             group_df = temp_df[temp_df['group'] == group]
             
-            group_df['transf_value'] = transform_z_o(group_df['value'], counts['ids'])
+            group_df['transf_value'] = group_df['value']
             
             if type(join_df) != bool:
                 join_df = pd.concat([join_df, group_df])
             else:
                 join_df = group_df
-            
+        if len(join_df.index) < 2:
+            print(key)
+            join_df = False
+            continue
         join_df.to_csv(key+".csv")
         join_df = False           
         with open("isoform_keys", 'a+') as f:
             f.write(str(key)+"\n")
             
-count_df = pd.DataFrame.from_dict(counts, orient = 'index')
-count_df.columns = barcode_names
-count_df = count_df.drop(['ids'])
-count_df = count_df.reset_index()
-count_df = count_df.rename(columns={"index": "transcript"})
-count_df.to_csv('norm_counts.tsv',sep = '\t', index = False)
 
-
-with open('dataframes_melt_raw.pickle', 'wb') as f:
-    pickle.dump(dataframes_melt_raw, f)
 with open('dataframes_melt.pickle', 'wb') as f:
     pickle.dump(dataframes_melt, f)
 
